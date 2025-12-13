@@ -30,7 +30,7 @@ app.use("/web/api", indexWebRouter);
 
 
 app.get("/", (req, res) => {
-  res.send("Civion Api Is Working");
+  res.send("Civion Uat Api Is Working");
 });
 
 app.use((err, req, res, next) => {
