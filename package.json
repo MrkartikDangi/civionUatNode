@@ -1,0 +1,51 @@
+{
+	"name": "civion_backend",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"start": "nodemon ./bin/www",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"format": "prettier --write ."
+	},
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"dependencies": {
+		"@aws-sdk/client-s3": "^3.777.0",
+		"@azure/msal-node": "^3.6.3",
+		"@microsoft/microsoft-graph-client": "^3.0.7",
+		"axios": "^1.7.9",
+		"canvas": "^3.1.2",
+		"cors": "^2.8.5",
+		"dotenv": "^16.4.7",
+		"exceljs": "^4.4.0",
+		"express": "^4.21.2",
+		"express-validator": "^7.2.1",
+		"handlebars": "^4.7.8",
+		"isomorphic-fetch": "^3.0.0",
+		"jsonwebtoken": "^9.0.2",
+		"moment": "^2.30.1",
+		"moment-timezone": "^0.6.0",
+		"morgan": "^1.10.0",
+		"multer": "^1.4.5-lts.1",
+		"mysql": "^2.18.1",
+		"nodemailer": "^6.10.0",
+		"nodemon": "^3.1.9",
+		"onedrive-api": "^1.1.1",
+		"pdf-lib": "^1.17.1",
+		"pdf-parse": "^1.1.1",
+		"pdf2json": "^3.2.0",
+		"pdf2pic": "^3.2.0",
+		"pdfjs-dist": "^4.10.38",
+		"tesseract.js": "^6.0.1"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.20.0",
+		"eslint": "^9.20.0",
+		"eslint-config-prettier": "^10.0.1",
+		"eslint-plugin-prettier": "^5.2.3",
+		"globals": "^15.14.0",
+		"prettier": "^3.4.2"
+	}
+}

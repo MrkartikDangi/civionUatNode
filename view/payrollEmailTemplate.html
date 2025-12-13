@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{{type}} Report Approved</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding: 40px 0; background-color: #f0f2f5;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background: #ffffff; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); padding: 40px;">
+          <tr>
+            <td>
+              <div style="text-align: center; margin-bottom: 30px;">
+                <h2 style="color: #2c3e50; margin: 0;">{{type}} Report Approved</h2>
+                <p style="color: #888; font-size: 14px; margin-top: 6px;">Notification from the Approval System</p>
+              </div>
+
+              <p style="font-size: 15px; color: #333333;">Hello <strong>Tabworks</strong>,</p>
+              <p style="font-size: 15px; color: #555555;">
+                The <strong>{{type}}</strong> report submitted by <strong>{{employeeName}}</strong> has been successfully approved.
+              </p>
+
+              <table width="100%" style="margin: 25px 0;">
+                <tr>
+                  <td style="padding: 15px; background-color: #f9f9f9; border-radius: 8px;">
+                    <p style="margin: 0; font-size: 14px; color: #333;"><strong>Approved Amount:</strong> <span style="color: #27ae60;">${{totalApprovedAmount}}</span></p>
+                    <p style="margin: 5px 0 0 0; font-size: 14px; color: #333;"><strong>Dates Covered:</strong> {{startDate}} – {{endDate}}</p>
+                    <p style="margin: 5px 0 0 0; font-size: 14px; color: #333;"><strong>Status:</strong> Will be processed in the next pay run</p>
+                  </td>
+                </tr>
+              </table>
+
+              {{#if images.length}}
+              <div style="margin-top: 30px;">
+                <h3 style="font-size: 16px; color: #2c3e50; margin-bottom: 10px;">Attached Expense Images</h3>
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td>
+                      <ul style="padding-left: 0; list-style: none; margin: 0;">
+                        {{#each images}}
+                        <li style="margin-bottom: 15px;">
+                          <a href="{{this.path}}" target="_blank" style="text-decoration: none;">
+                            <img src="{{this.path}}" alt="Expense Receipt" style="max-width: 100%; border-radius: 6px; border: 1px solid #ddd; padding: 4px; display: block; margin-bottom: 5px;">
+                            <span style="font-size: 12px; color: #3498db;">View full size</span>
+                          </a>
+                        </li>
+                        {{/each}}
+                      </ul>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              {{/if}}
+
+              <p style="font-size: 14px; color: #555555; margin-top: 30px;">Warm regards,<br>
+                <strong>The {{type}} Approval System</strong>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

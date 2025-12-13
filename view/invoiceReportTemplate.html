@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Invoice Report</title>
+</head>
+
+<body
+    style="margin: 0; padding: 0; background-color: #eef1f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding: 50px 0;">
+        <tr>
+            <td align="center">
+                <!-- Card Container -->
+                <table width="600" cellpadding="0" cellspacing="0"
+                    style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
+
+                    <!-- Header -->
+                    <tr>
+                        <td
+                            style="background: linear-gradient(135deg, #3498db, #2c3e50); padding: 25px; text-align: center;">
+                            <h1 style="margin: 0; font-size: 22px; color: #ffffff;">📄 Invoice Report</h1>
+                            <p style="margin: 5px 0 0; font-size: 14px; color: #dfe6e9;">Automated Report Delivery</p>
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 30px;">
+                            <p style="font-size: 15px; color: #2c3e50;">Hello <strong>Paul</strong>,</p>
+                            <p style="font-size: 15px; color: #555555; line-height: 1.6;">
+                                We hope this message finds you well.
+                            </p>
+                            <p style="font-size: 15px; color: #555555; line-height: 1.6;">
+                                Please find the attached invoice report for the period from
+                                <strong>{{formattedFromDate}}</strong> to
+                                <strong>{{formattedToDate}}</strong>.
+                            </p>
+
+                            <!-- Highlight Box -->
+                            <div
+                                style="margin: 25px 0; padding: 18px; background-color: #f4f8fb; border-left: 5px solid #3498db; border-radius: 6px;">
+                                <p style="margin: 0; font-size: 14px; color: #2c3e50; line-height: 1.5;">
+                                    <strong>Note:</strong> The attached file contains itemized billing details for the
+                                    specified date range.
+                                </p>
+                            </div>
+
+                            <!-- Attachment Section -->
+                            <div
+                                style="margin: 25px 0; padding: 20px; background-color: #f4f8fb; border-left: 5px solid #3498db; border-radius: 6px;">
+                                <table cellpadding="0" cellspacing="0" width="100%">
+                                    <tr>
+                                        <td style="vertical-align: middle; padding-right: 15px; width: 50px;">
+                                            <div style="background-color: #3498db; color: #ffffff; width: 48px; height: 48px; border-radius: 8px; text-align: center; line-height: 48px; font-size: 22px; font-weight: bold;">
+                                                📎
+                                            </div>
+                                        </td>
+                                        <td style="vertical-align: middle;">
+                                            <p style="margin: 0; font-size: 14px; color: #2c3e50;">
+                                                <strong>Attached File:</strong> Kps_Invoice_{{formattedFromDate}}_to_{{formattedToDate}}.xlsx
+                                            </p>
+                                            <p style="margin: 2px 0 0; font-size: 12px; color: #555;">
+                                                Click the attachment in your email client to view full billing details.
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <!-- Signature -->
+                            <p style="font-size: 14px; color: #555555; line-height: 1.5;">
+                                Sincerely,<br>
+                                <strong style="color: #2c3e50;">The Invoice Generating System</strong>
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td
+                            style="background-color: #f7f9fc; padding: 15px; text-align: center; font-size: 12px; color: #95a5a6;">
+                            © {{currentYear}} Invoice System. All rights reserved.
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>

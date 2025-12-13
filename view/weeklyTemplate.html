@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f7f7f7;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+        }
+
+        .table-section {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            page-break-inside: avoid;
+            width: 100%;
+        }
+
+        .table-container {
+            width: 100%;
+            page-break-inside: avoid;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            page-break-inside: auto;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .spaced-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 10px 0;
+            font-size: 18px;
+            width: 100%;
+        }
+
+        .spaced-row span {
+            flex: 1 1 30%;
+            min-width: 150px;
+        }
+
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .image-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .image-item img {
+            width: 200px;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .contractor-section {
+            page-break-before: always;
+        }
+
+        .logo-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 10px 0;
+            border-bottom: 2px solid #007bff;
+            /* Adds a subtle underline */
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+        }
+
+        .project-title {
+            flex: 1;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .spaced-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 50px; 
+            /* Provides space between the columns */
+        }
+
+        .spaced-column {
+            flex: 1;
+            min-width: 300px;
+            /* Ensures responsiveness */
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Section -->
+    <div class="logo-section">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLU1SXHBMk8oAF4r4EC9C2TXhIkN-zzu9LH3Y5Ff_hI2hQhB8rOIpnSh5YXqvtyrSftg&usqp=CAU"
+            alt="Logo" style="height: 50px;">
+        <h1 class="project-title">{{projectName}}</h1>
+        <img src="data:image/png;base64,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"
+            alt="Logo" style="height: 50px;">
+    </div>
+    <!-- Project Details Section -->
+    <div class="table-section">
+        <h2>Project Details</h2>
+        <div class="spaced-container">
+            <!-- Left Section (Project Details) -->
+               <!-- Right Section (Contract & Schedule Details) -->
+            <div class="spaced-column">
+                {{#if contractNumber}}<span><strong>Contract Number:</strong> {{contractNumber}}</span>{{/if}}
+                {{#if contractSiteSupervisorOnshore}}<span><strong>Site Supervisor(Onshore):</strong> {{contractSiteSupervisorOnshore}}</span>{{/if}}
+                {{#if contractSiteSupervisorOffshore}}<span><strong>Site Supervisor(Offshore):</strong> {{contractSiteSupervisorOffshore}}</span>{{/if}}
+                {{#if residentSiteInspector}}<span><strong>Resident Site Inspector:</strong> {{residentSiteInspector}}</span>{{/if}}
+                {{#if startDate}}<span><strong>Project Start Date:</strong> {{startDate}}</span>{{/if}}
+                {{#if endDate}}<span><strong>Project End Date:</strong> {{endDate}}</span>{{/if}}
+            </div>
+            <div class="spaced-column">
+                {{#if projectName}}<span><strong>Project Name:</strong> {{projectName}}</span>{{/if}}
+                {{#if associatedProjectNumber}}<span><strong>Project Number:</strong> {{associatedProjectNumber}}</span>{{/if}}
+                {{#if clientName}}<span><strong>Client Name:</strong> {{clientName}}</span>{{/if}}
+                {{#if contractProjectManager}}<span><strong>Project Owner:</strong> {{contractProjectManager}}</span>{{/if}}
+                {{#if cityProjectManager}}<span><strong>Project Manager:</strong> {{cityProjectManager}}</span>{{/if}}
+                {{#if associatedProjectManager}}<span><strong>Associated Project Manager:</strong> {{associatedProjectManager}}</span>{{/if}}
+                {{#if contractAdministrator}}<span><strong>Contract Administrator:</strong> {{contractAdministrator}}</span>{{/if}}
+                {{#if supportCA}}<span><strong>Support CA:</strong> {{supportCA}}</span>{{/if}}
+                {{#if backupInspector}}<span><strong>Backup Inspector:</strong> {{backupInspector}}</span>{{/if}}
+            </div>
+        
+          
+        </div>
+        
+        
+    </div>
+
+
+    <!-- Equipment Details Section -->
+    <div class="table-section">
+        <h2>Equipment Details</h2>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>Equipment Name</th>
+                    <th>Days Used</th>
+                </tr>
+                {{#each weeklySummary.equipments}}
+                <tr>
+                    <td>{{this.name}}</td>
+                    <td>{{this.days}}</td>
+                </tr>
+                {{/each}}
+            </table>
+        </div>
+    </div>
+
+    <!-- Visitors Section -->
+    <div class="table-section">
+        <h2>Visitor Details</h2>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>Visitor Company</th>
+                    <th>Days Present</th>
+                </tr>
+                {{#each weeklySummary.visitors}}
+                <tr>
+                    <td>{{this.visitorCompany}}</td>
+                    <td>{{this.days}}</td>
+                </tr>
+                {{/each}}
+            </table>
+        </div>
+    </div>
+
+    <!-- Contractor Details Section -->
+    <div class="table-section contractor-section">
+        <h2>Contractor Details</h2>
+        {{#each weeklySummary.contractorDetails}}
+        <div class="table-section">
+            <h3>{{this.contractorName}}</h3>
+            <div class="table-container">
+                <table>
+                    <tr>
+                        <th>Labour Role</th>
+                        <th>Count</th>
+                    </tr>
+                    {{#each this.labours}}
+                    <tr>
+                        <td>{{this.role}}</td>
+                        <td>{{this.count}}</td>
+                    </tr>
+                    {{/each}}
+                </table>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+
+    <!-- Images Section -->
+    <div class="table-section">
+        <h2>Project Images</h2>
+        <div class="image-container">
+            {{#each images}}
+            <div class="image-item">
+                <img src="{{this.photo}}" alt="Project Image">
+                <p>{{this.description}}</p>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+</body>
+
+</html>
