@@ -14,6 +14,9 @@ PhotoFiles.getPhotoFilesData = (postData) => {
   if (postData.filter && postData.filter.schedule_id) {
     whereCondition += ` AND schedule_id = '${postData.filter.schedule_id}'`
   }
+    if (postData.filter && postData.filter.fromDate  && postData.filter.toDate) {
+    whereCondition += ` AND DATE(created_at) BETWEEN '${postData.filter.fromDate}' AND '${postData.filter.toDate}'`
+  }
   return new Promise((resolve, reject) => {
     let query = `SELECT kps_photofiles_doc.*, IFNULL(DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at,IFNULL(DATE_FORMAT(updated_at, '%Y-%m-%d %H:%i:%s'), '') AS updated_at,IFNULL(CONCAT('${process.env.Base_Url}',folder_name,'/', file_url), '') as file_url FROM kps_photofiles_doc WHERE 1 = 1 ${whereCondition}`
     let values = []
