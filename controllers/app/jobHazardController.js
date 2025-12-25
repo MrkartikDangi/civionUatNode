@@ -3,6 +3,7 @@ const generic = require("../../config/genricFn/common");
 const { validationResult, matchedData } = require("express-validator");
 const db = require("../../config/db")
 const oneDrive = require("../../models/oneDriveModel")
+const notification = require("../../models/Notification")
 
 exports.getJobHazardData = async (req, res) => {
   try {
@@ -48,6 +49,14 @@ exports.createJobHazard = async (req, res) => {
           await JobHazard.addTaskData(row)
         }
       }
+      let notificationData = {
+        subject: 'Job Hazard',
+        message: `${req.body.user.username} has submitted an job hazard`,
+        for_boss: '1',
+        created_by: req.body.user.userId,
+        dateTime: req.body.user.dateTime
+      }
+      await notification.addNotificationData(notificationData)
       db.connection.commit()
       return generic.success(req, res, {
         message: "Job Hazard data submitted successfully.",
@@ -59,7 +68,59 @@ exports.createJobHazard = async (req, res) => {
     } else {
       db.connection.rollback()
       return generic.error(req, res, {
-        message: "Job Hazard data submitted successfully.",
+        message: "Failed to submit job hazard data",
+      });
+
+    }
+
+  } catch (error) {
+    db.connection.rollback()
+    return generic.error(req, res, {
+      status: 500,
+      message: "Something went wrong.",
+    });
+  }
+};
+exports.updateJobHazard = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const x = matchedData(req);
+    return generic.validationError(req, res, {
+      message: "Needs to fill required input fields",
+      validationObj: errors.mapped(),
+    });
+  }
+  try {
+    db.connection.beginTransaction()
+    const updateJobHazardData = await JobHazard.updateJobHazardData(req.body)
+    if (updateJobHazardData.affectedRows) {
+      if (req.body.selectedActivities && req.body.selectedActivities.length) {
+        await generic.deleteData({ table_name: 'kps_jobHazardActvity', column_name: 'job_hazard_id', id: req.body.id })
+        for (let row of req.body.selectedActivities) {
+          row.userId = req.body.user.userId
+          row.jobHazardId = req.body.id
+          row.dateTime = req.body.user.dateTime
+          await JobHazard.addActivityData(row)
+        }
+      }
+      if (req.body.tasks && req.body.tasks.length) {
+        await generic.deleteData({ table_name: 'kps_jobHazardTasks', column_name: 'job_hazard_id', id: req.body.id })
+        for (let row of req.body.tasks) {
+          row.userId = req.body.user.userId
+          row.jobHazardId = req.body.id
+          row.dateTime = req.body.user.dateTime
+          await JobHazard.addTaskData(row)
+        }
+      }
+      db.connection.commit()
+      return generic.success(req, res, {
+        message: "Job Hazard data updated successfully.",
+      });
+
+    } else {
+      db.connection.rollback()
+      return generic.error(req, res, {
+        message: "Failed to update job hazard data",
       });
 
     }

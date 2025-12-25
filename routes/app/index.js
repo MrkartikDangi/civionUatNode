@@ -84,7 +84,7 @@ router.post(
   userController.registerUser,
 );
 router.post(
-  "/auth/getUsersList",authenticateJWT,userController.getUsersList,
+  "/auth/getUsersList", authenticateJWT, userController.getUsersList,
 );
 router.post(
   "/auth/addUser",
@@ -334,10 +334,36 @@ router.post(
       check("siteOrientationChecked", "siteOrientationChecked is required").notEmpty(),
       check("tasks", "tasks is required").notEmpty(),
       check("toolBoxMeetingChecked", "toolBoxMeetingChecked is required").notEmpty(),
+      check("employerSignature", "employerSignature is required").notEmpty(),
+      check("schedule_id", "schedule_id is required").notEmpty(),
     ],
   ]),
   authenticateJWT,
   jobHazardController.createJobHazard,
+);
+router.post(
+  "/jobHazard/updateJobHazard",
+  oneOf([
+    [
+      check("WorkerName", "WorkerName is required").notEmpty(),
+      check("selectedDate", "selectedDate is required").notEmpty(),
+      check("time", "time is required").notEmpty(),
+      check("location", "location is required").notEmpty(),
+      check("projectName", "projectName is required").notEmpty(),
+      check("description", "description is required").notEmpty(),
+      check("selectedActivities", "selectedActivities is required").notEmpty(),
+      check("siteOrientationChecked", "siteOrientationChecked is required").notEmpty(),
+      check("tasks", "tasks is required").notEmpty(),
+      check("toolBoxMeetingChecked", "toolBoxMeetingChecked is required").notEmpty(),
+      check("employerSignature", "employerSignature is required").notEmpty(),
+      check("approverSignature", "approverSignature is required").notEmpty(),
+      check("schedule_id", "schedule_id is required").notEmpty(),
+      check("completedStatus", "completedStatus is required").notEmpty(),
+
+    ],
+  ]),
+  authenticateJWT,
+  jobHazardController.updateJobHazard,
 );
 
 router.post("/logos/getLogo", authenticateJWT, logoController.getLogoList);
@@ -525,7 +551,7 @@ router.post(
 );
 router.post(
   "/setting/getSettingFields",
-   oneOf([
+  oneOf([
     [
       check("setting_key", "setting_key is required").notEmpty(),
     ],

@@ -4,7 +4,7 @@ const jobHazard = () => { }
 
 jobHazard.getJobHazardData = (postData) => {
   return new Promise((resolve, reject) => {
-    let query = `SELECT j.*, COALESCE(JSON_ARRAYAGG(JSON_OBJECT('activityName', a.activityName, 'activity', (SELECT JSON_ARRAYAGG(TRIM(value)) FROM JSON_TABLE(CONCAT('["', REPLACE(a.activity_types, ',', '","'), '"]'), '$[*]' COLUMNS (value VARCHAR(255) PATH '$')) AS jt))), JSON_ARRAY()) AS activities, COALESCE((SELECT JSON_ARRAYAGG(JSON_OBJECT('task', t.task, 'severity', t.severity, 'hazard', t.hazard, 'controlPlan', t.controlPlan)) FROM kps_jobHazardTasks t WHERE t.job_hazard_id = j.id), JSON_ARRAY()) AS tasks FROM kps_jobhazard j LEFT JOIN kps_jobHazardActvity a ON a.job_hazard_id = j.id GROUP BY j.id;`
+    let query = `SELECT j.*, COALESCE(JSON_ARRAYAGG(JSON_OBJECT('activityName', a.activityName, 'activity', (SELECT JSON_ARRAYAGG(TRIM(value)) FROM JSON_TABLE(CONCAT('["', REPLACE(a.activity_types, ',', '","'), '"]'), '$[*]' COLUMNS (value VARCHAR(255) PATH '$')) AS jt))), JSON_ARRAY()) AS activities, COALESCE((SELECT JSON_ARRAYAGG(JSON_OBJECT('task', t.task, 'severity', t.severity, 'hazard', t.hazard, 'controlPlan', t.controlPlan)) FROM kps_jobHazardTasks t WHERE t.job_hazard_id = j.id), JSON_ARRAY()) AS tasks,ks.project_name AS schedule_name FROM kps_jobhazard j LEFT JOIN kps_jobHazardActvity a ON a.job_hazard_id = j.id LEFT JOIN kps_schedules ks ON ks.id = j.schedule_id GROUP BY j.id ORDER BY j.id desc;`
     let values = []
     db.connection.query(query, values, (err, res) => {
       if (err) {
@@ -22,6 +22,10 @@ jobHazard.addJobHazardData = (postData) => {
       worker_name: postData.WorkerName,
       project_name: postData.projectName,
       selected_date: postData.selectedDate,
+      employerSignature: postData.employerSignature,
+      approverSignature: null,
+      approverSignatureId: null,
+      schedule_id: postData.schedule_id,
       time: postData.time,
       location: postData.location,
       description: postData.description,
@@ -74,6 +78,35 @@ jobHazard.addTaskData = (postData) => {
     }
     let query = `INSERT INTO ?? SET ?`
     let queryValues = ['kps_jobHazardTasks', insertedData]
+    db.connection.query(query, queryValues, (err, res) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res)
+      }
+    })
+  })
+}
+jobHazard.updateJobHazardData = (postData) => {
+  return new Promise((resolve, reject) => {
+    let updatedData = {
+      worker_name: postData.WorkerName,
+      project_name: postData.projectName,
+      selected_date: postData.selectedDate,
+      employerSignature: postData.employerSignature,
+      approverSignature: postData.approverSignature,
+      approverSignatureId: postData.user.userId,
+      schedule_id: postData.schedule_id,
+      time: postData.time,
+      location: postData.location,
+      description: postData.description,
+      siteOrientationChecked: postData.siteOrientationChecked || false,
+      toolBoxMeetingChecked: postData.toolBoxMeetingChecked || false,
+      completedStatus: postData.completedStatus,
+      updated_at: postData.user.dateTime,
+    }
+    let query = `UPDATE ?? SET ? WHERE id = ?`
+    let queryValues = ['kps_jobhazard', updatedData, postData.id]
     db.connection.query(query, queryValues, (err, res) => {
       if (err) {
         reject(err)

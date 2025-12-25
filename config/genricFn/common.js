@@ -950,6 +950,21 @@ Generic.getSettingFields = async (postData) => {
     })
   })
 };
+Generic.deleteData = async (postData) => {
+  return new Promise((resolve, reject) => {
+    let query = `DELETE FROM ?? WHERE ?? = ?`
+    console.log('query',query)
+    let queryValues = [postData.table_name, postData.column_name, postData.id]
+    console.log('queryValues',queryValues)
+    db.connection.query(query, queryValues, (err, res) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res)
+      }
+    })
+  })
+}
 
 
 
