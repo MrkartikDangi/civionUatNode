@@ -7,6 +7,9 @@ const notification = require("../../models/Notification")
 
 exports.getJobHazardData = async (req, res) => {
   try {
+    if (!req.body.user.isBoss) {
+      req.body.filter.userId = req.body.user.userId
+    }
     const data = await JobHazard.getJobHazardData(req.body);
     return generic.success(req, res, {
       message: "Job Hazard data retrieved successfully.",

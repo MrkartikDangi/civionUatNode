@@ -8,6 +8,9 @@ const db = require("../../config/db")
 const { validationResult, matchedData } = require("express-validator");
 const notification = require("../../models/Notification")
 const moment = require("moment")
+const {
+  expenseTemplate,
+} = require("../../utils/pdfHandlerNew/htmlHandler");
 
 exports.addExpense = async (req, res) => {
   try {
@@ -26,10 +29,7 @@ exports.addExpense = async (req, res) => {
       } else {
         req.body.mileageExpense = mileageUser.reduce((sum, trip) => sum + trip.amount, 0)
       }
-
     }
-    // req.body.pdfBaseName = path.basename(req.body.receipt);
-    // req.body.folder_name = path.dirname(req.body.receipt);
     req.body.mileage_ids = mileage_ids
     const addExpense = await expense.addExpense(req.body)
     if (addExpense.insertId) {
@@ -57,14 +57,25 @@ exports.addExpense = async (req, res) => {
           await mileage.updateMileageAppendStatus({ id: row.id, dateTime: req.body.user.dateTime, expense_id: addExpense.insertId })
         }
       }
+      let message = `${req.body.user.username} has submitted an expense and mileage report with a total amount of $${(req.body?.expenseAmount + req.body.mileageExpense).toFixed(2)}.`
       let notificationData = {
         subject: 'Expense',
-        message: `${req.body.user.username} has submitted an expense and mileage report with a total amount of $${(req.body.expenseAmount + req.body.mileageExpense).toFixed(2)}.`,
+        message: message,
         for_boss: '1',
         created_by: req.body.user.userId,
         dateTime: req.body.user.dateTime
       }
       await notification.addNotificationData(notificationData)
+      let Maildata = {
+        to: "kpdangi660@gmail.com , faiz.ahmadmq293@gmail.com",
+        cc: "",
+        bcc: "",
+        subject: `Expense Submitted`,
+        html: expenseTemplate({ message: message }),
+        attachments: [],
+      };
+      await generic.sendEmails(Maildata)
+
       db.connection.commit()
       return generic.success(req, res, {
         message: "Expense successfully created",

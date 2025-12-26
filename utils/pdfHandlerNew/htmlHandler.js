@@ -21,15 +21,21 @@ const invoiceTemplateSource = fs.readFileSync(
   path.join(__dirname, "../../view/invoiceReportTemplate.html"),
   "utf8",
 );
-
+const expenseTemplateSource = fs.readFileSync(
+  path.join(__dirname, "../../view/expenseTemplate.html"),
+  "utf8",
+);
 const dailyTemplate = handlebars.compile(dailyTemplateSource);
 const weeklyTemplate = handlebars.compile(weeklytemplateSource);
 const dailyDiaryTemplate = handlebars.compile(dailyDiaryTemplateSource);
 const invoiceReportTemplate = handlebars.compile(invoiceTemplateSource);
+const expenseTemplate = handlebars.compile(expenseTemplateSource);
+
 
 module.exports = {
   weeklyTemplate,
   dailyTemplate,
   dailyDiaryTemplate,
   invoiceReportTemplate,
+  expenseTemplate
 };
