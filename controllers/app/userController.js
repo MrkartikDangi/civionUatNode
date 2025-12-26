@@ -151,7 +151,8 @@ exports.login = async (req, res) => {
           userName: checkExistingUser[0]?.username ?? '',
           isBoss: isBoss,
           mileage_rate: checkExistingUser[0]?.mileage_rate ?? '',
-          allowanceDistance: checkExistingUser[0]?.allowanceDistance ?? ''
+          allowanceDistance: checkExistingUser[0]?.allowanceDistance ?? '',
+          jhaApproval: checkExistingUser[0]?.jhaApproval ?? 0
 
         },
       });
