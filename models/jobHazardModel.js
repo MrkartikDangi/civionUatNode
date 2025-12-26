@@ -5,7 +5,7 @@ const jobHazard = () => { }
 jobHazard.getJobHazardData = (postData) => {
   let whereCondition = ``
   if (postData.filter && postData.filter.userId) {
-    whereCondition += ` AND j.userId = ${postData.filter.userId}`
+    whereCondition += ` AND j.created_by = ${postData.filter.userId}`
   }
   if (postData.filter && postData.filter.schedule_id) {
     whereCondition += ` AND j.schedule_id = ${postData.filter.schedule_id}`
