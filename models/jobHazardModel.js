@@ -4,7 +4,7 @@ const jobHazard = () => { }
 
 jobHazard.getJobHazardData = (postData) => {
   return new Promise((resolve, reject) => {
-    let query = `SELECT j.*, COALESCE(JSON_ARRAYAGG(JSON_OBJECT('activityName', a.activityName, 'activity', (SELECT JSON_ARRAYAGG(TRIM(value)) FROM JSON_TABLE(CONCAT('["', REPLACE(a.activity_types, ',', '","'), '"]'), '$[*]' COLUMNS (value VARCHAR(255) PATH '$')) AS jt))), JSON_ARRAY()) AS activities, COALESCE((SELECT JSON_ARRAYAGG(JSON_OBJECT('task', t.task, 'severity', t.severity, 'hazard', t.hazard, 'controlPlan', t.controlPlan)) FROM kps_jobHazardTasks t WHERE t.job_hazard_id = j.id), JSON_ARRAY()) AS tasks,ks.project_name AS schedule_name FROM kps_jobhazard j LEFT JOIN kps_jobHazardActvity a ON a.job_hazard_id = j.id LEFT JOIN kps_schedules ks ON ks.id = j.schedule_id GROUP BY j.id ORDER BY j.id desc;`
+    let query = `SELECT j.*, COALESCE(JSON_ARRAYAGG(JSON_OBJECT('activityName', a.activityName, 'activities', (SELECT JSON_ARRAYAGG(TRIM(value)) FROM JSON_TABLE(CONCAT('["', REPLACE(a.activity_types, ',', '","'), '"]'), '$[*]' COLUMNS (value VARCHAR(255) PATH '$')) AS jt))), JSON_ARRAY()) AS selectedActivities, COALESCE((SELECT JSON_ARRAYAGG(JSON_OBJECT('task', t.task, 'severity', t.severity, 'hazard', t.hazard, 'controlPlan', t.controlPlan)) FROM kps_jobHazardTasks t WHERE t.job_hazard_id = j.id), JSON_ARRAY()) AS tasks,ks.project_name AS schedule_name FROM kps_jobhazard j LEFT JOIN kps_jobHazardActvity a ON a.job_hazard_id = j.id LEFT JOIN kps_schedules ks ON ks.id = j.schedule_id GROUP BY j.id ORDER BY j.id desc;`
     let values = []
     db.connection.query(query, values, (err, res) => {
       if (err) {
