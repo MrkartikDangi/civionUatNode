@@ -4,6 +4,11 @@ const { validationResult, matchedData } = require("express-validator");
 const db = require("../../config/db")
 const oneDrive = require("../../models/oneDriveModel")
 const notification = require("../../models/Notification")
+const {
+  JobHazardTemplate,
+} = require("../../utils/pdfHandlerNew/htmlHandler");
+const fs = require("fs");
+
 
 exports.getJobHazardData = async (req, res) => {
   try {
@@ -17,8 +22,8 @@ exports.getJobHazardData = async (req, res) => {
     });
   } catch (error) {
     return generic.error(req, res, {
-      message: "Error getting job hazard data",
-      details: error.message,
+      status: 500,
+      message: "Something went wrong !"
     });
   }
 };
@@ -133,6 +138,51 @@ exports.updateJobHazard = async (req, res) => {
     return generic.error(req, res, {
       status: 500,
       message: "Something went wrong.",
+    });
+  }
+};
+exports.sendJhaMail = async (req, res) => {
+  try {
+    if (req?.files && req.files?.file?.length) {
+      let Maildata = {
+        to: "kpdangi660@gmail.com , faiz.ahmadmq293@gmail.com",
+        cc: "studykaro80588@gmail.com",
+        bcc: "",
+        subject: `Job Hazard`,
+        html: JobHazardTemplate({ message: `Please find the attached job hazard report for your review and reference.` }),
+        attachments: [
+          {
+            filename: req?.files?.file[0]?.originalname,
+            content: req?.files?.file[0]?.path,
+            contentType: "application/pdf",
+          },
+        ],
+      };
+      let result = await generic.sendEmails(Maildata)
+      if (result) {
+        fs.unlinkSync(req?.files?.file[0]?.path)
+        return generic.success(req, res, {
+          message: "Job Hazard mail sent successfully."
+        });
+
+      } else {
+        return generic.error(req, res, {
+          message: "Failed to send jha mail.",
+        });
+
+      }
+
+    } else {
+      return generic.error(req, res, {
+        message: "Select atleast one file",
+      });
+    }
+
+  } catch (error) {
+    console.log('error', error)
+    return generic.error(req, res, {
+      status: 500,
+      message: "Something went wrong !"
     });
   }
 };

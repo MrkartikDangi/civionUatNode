@@ -571,5 +571,11 @@ router.post(
   authenticateJWT,
   oneDriveController.uploadToOneDrive,
 );
+router.post(
+  "/jobHazard/sendJhaMail",
+  upload.fields([{ name: "file" }]),
+  authenticateJWT,
+  jobHazardController.sendJhaMail,
+);
 
 module.exports = router;

@@ -25,11 +25,17 @@ const expenseTemplateSource = fs.readFileSync(
   path.join(__dirname, "../../view/expenseTemplate.html"),
   "utf8",
 );
+const JobHazardTemplateSource = fs.readFileSync(
+  path.join(__dirname, "../../view/JobHazardTemplate.html"),
+  "utf8",
+);
 const dailyTemplate = handlebars.compile(dailyTemplateSource);
 const weeklyTemplate = handlebars.compile(weeklytemplateSource);
 const dailyDiaryTemplate = handlebars.compile(dailyDiaryTemplateSource);
 const invoiceReportTemplate = handlebars.compile(invoiceTemplateSource);
 const expenseTemplate = handlebars.compile(expenseTemplateSource);
+const JobHazardTemplate = handlebars.compile(JobHazardTemplateSource);
+
 
 
 module.exports = {
@@ -37,5 +43,6 @@ module.exports = {
   dailyTemplate,
   dailyDiaryTemplate,
   invoiceReportTemplate,
-  expenseTemplate
+  expenseTemplate,
+  JobHazardTemplate
 };
