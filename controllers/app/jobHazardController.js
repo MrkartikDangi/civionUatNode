@@ -152,8 +152,8 @@ exports.sendJhaMail = async (req, res) => {
         html: JobHazardTemplate({ message: `Please find the attached job hazard report for your review and reference.` }),
         attachments: [
           {
-            filename: req?.files?.file[0]?.originalname,
-            content: req?.files?.file[0]?.path,
+            filename: req?.files?.file[0]?.originalname || "Job_Hazard_Report.pdf",
+            path: req?.files?.file[0]?.path,
             contentType: "application/pdf",
           },
         ],
