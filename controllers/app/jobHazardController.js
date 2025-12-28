@@ -60,7 +60,7 @@ exports.createJobHazard = async (req, res) => {
       }
       let notificationData = {
         subject: 'Job Hazard',
-        message: `${req.body.user.username} has submitted an job hazard`,
+        message: `${req.body.user.first_name} ${req.body.user.last_name} has submitted the Job Hazard Analysis`,
         for_boss: '1',
         created_by: req.body.user.userId,
         dateTime: req.body.user.dateTime
@@ -77,8 +77,8 @@ exports.createJobHazard = async (req, res) => {
         to: getMailInfo?.email_to ?? '',
         cc: `${getMailInfo?.email_cc ?? ''},${approvalMail}`,
         bcc: getMailInfo?.email_bcc ?? '',
-        subject: `Job Hazard`,
-        html: JobHazardTemplate({ message: `Please review submitted JHA by ${req.body.user.username} in the civion.` }),
+        subject: `Review the submitted JHA`,
+        html: JobHazardTemplate({ message: `Please review the submitted JHA by ${req.body.user.first_name} ${req.body.user.last_name} in the CIVION.` }),
         attachments: [],
       };
       await generic.sendEmails(Maildata)
@@ -171,8 +171,8 @@ exports.sendJhaMail = async (req, res) => {
         to: getMailInfo?.email_to ?? '',
         cc: `${getMailInfo?.email_cc ?? ''},${approvalMail}`,
         bcc: getMailInfo?.email_bcc ?? '',
-        subject: `Job Hazard`,
-        html: JobHazardTemplate({ message: `Please find the attached job hazard report for your review and reference.` }),
+        subject: `JHA by ${req.body.user.first_name} ${req.body.user.last_name}`,
+        html: JobHazardTemplate({ message: `Please find the attached Job Hazard Analysis PDF report for your review and reference.` }),
         attachments: [
           {
             filename: req?.files?.file[0]?.originalname || "Job_Hazard_Report.pdf",

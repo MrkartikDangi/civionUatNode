@@ -57,10 +57,9 @@ exports.addExpense = async (req, res) => {
           await mileage.updateMileageAppendStatus({ id: row.id, dateTime: req.body.user.dateTime, expense_id: addExpense.insertId })
         }
       }
-      let message = `${req.body.user.username} has submitted an expense and mileage report with a total amount of $${(req.body?.expenseAmount + req.body.mileageExpense).toFixed(2)}.`
       let notificationData = {
         subject: 'Expense',
-        message: message,
+        message: `${req.body.user.first_name} ${req.body.user.last_name} has submitted an expense and mileage report with a total amount of $${(req.body?.expenseAmount + req.body.mileageExpense).toFixed(2)}.`,
         for_boss: '1',
         created_by: req.body.user.userId,
         dateTime: req.body.user.dateTime
@@ -71,8 +70,8 @@ exports.addExpense = async (req, res) => {
         to: getMailInfo?.email_to ?? '',
         cc: getMailInfo?.email_cc ?? '',
         bcc: getMailInfo?.email_bcc ?? '',
-        subject: `Expense Submitted`,
-        html: expenseTemplate({ message: message }),
+        subject: `Expense submitted by ${req.body.user.first_name} ${req.body.user.last_name}`,
+        html: expenseTemplate({ message: `Please review the submitted expense by ${req.body.user.first_name} ${req.body.user.last_name} in the CIVION.` }),
         attachments: [],
       };
       await generic.sendEmails(Maildata)
