@@ -17,6 +17,9 @@ User.checkExistingUser = (postData) => {
   if (postData.filter && postData.filter.password) {
     whereCondition += ` AND password = '${postData.filter.password}'`
   }
+    if (postData.filter && postData.filter.jhaApproval) {
+    whereCondition += ` AND jhaApproval = '${postData.filter.jhaApproval}'`
+  }
   return new Promise((resolve, reject) => {
     let query = `SELECT * FROM kps_users WHERE 1 = 1 ${whereCondition}`
     let values = []

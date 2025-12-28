@@ -8,6 +8,7 @@ const {
   JobHazardTemplate,
 } = require("../../utils/pdfHandlerNew/htmlHandler");
 const fs = require("fs");
+const User = require("../../models/userModel")
 
 
 exports.getJobHazardData = async (req, res) => {
@@ -65,6 +66,22 @@ exports.createJobHazard = async (req, res) => {
         dateTime: req.body.user.dateTime
       }
       await notification.addNotificationData(notificationData)
+      let getMailInfo = await generic.getEmailInfo({ module_type: 'job_hazard' })
+      let getJhaApprovalUserMail = await User.checkExistingUser({ filter: { jhaApproval: '1' } })
+      let approvalMail = ``
+      if (getJhaApprovalUserMail?.length) {
+        approvalMail = getJhaApprovalUserMail[0]?.email
+      }
+
+      let Maildata = {
+        to: getMailInfo?.email_to ?? '',
+        cc: `${getMailInfo?.email_cc ?? ''},${approvalMail}`,
+        bcc: getMailInfo?.email_bcc ?? '',
+        subject: `Job Hazard`,
+        html: JobHazardTemplate({ message: `Please review submitted JHA by ${req.body.user.username} in the civion.` }),
+        attachments: [],
+      };
+      await generic.sendEmails(Maildata)
       db.connection.commit()
       return generic.success(req, res, {
         message: "Job Hazard data submitted successfully.",
@@ -144,10 +161,16 @@ exports.updateJobHazard = async (req, res) => {
 exports.sendJhaMail = async (req, res) => {
   try {
     if (req?.files && req.files?.file?.length) {
+      let getMailInfo = await generic.getEmailInfo({ module_type: 'job_hazard' })
+      let getJhaApprovalUserMail = await User.checkExistingUser({ filter: { jhaApproval: '1' } })
+      let approvalMail = ``
+      if (getJhaApprovalUserMail?.length) {
+        approvalMail = getJhaApprovalUserMail[0]?.email
+      }
       let Maildata = {
-        to: "kpdangi660@gmail.com , faiz.ahmadmq293@gmail.com",
-        cc: "studykaro80588@gmail.com",
-        bcc: "",
+        to: getMailInfo?.email_to ?? '',
+        cc: `${getMailInfo?.email_cc ?? ''},${approvalMail}`,
+        bcc: getMailInfo?.email_bcc ?? '',
         subject: `Job Hazard`,
         html: JobHazardTemplate({ message: `Please find the attached job hazard report for your review and reference.` }),
         attachments: [
@@ -179,7 +202,6 @@ exports.sendJhaMail = async (req, res) => {
     }
 
   } catch (error) {
-    console.log('error', error)
     return generic.error(req, res, {
       status: 500,
       message: "Something went wrong !"

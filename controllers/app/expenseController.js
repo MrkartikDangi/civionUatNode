@@ -66,10 +66,11 @@ exports.addExpense = async (req, res) => {
         dateTime: req.body.user.dateTime
       }
       await notification.addNotificationData(notificationData)
+      let getMailInfo = await generic.getEmailInfo({ module_type: 'expense' })
       let Maildata = {
-        to: "kpdangi660@gmail.com , faiz.ahmadmq293@gmail.com",
-        cc: "",
-        bcc: "",
+        to: getMailInfo?.email_to ?? '',
+        cc: getMailInfo?.email_cc ?? '',
+        bcc: getMailInfo?.email_bcc ?? '',
         subject: `Expense Submitted`,
         html: expenseTemplate({ message: message }),
         attachments: [],

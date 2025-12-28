@@ -909,13 +909,14 @@ Generic.sendExpenseMileageMail = async (postData) => {
 
     }
     const emailHTML = emailTemplate(emailData);
+    let getMailInfo = await this.getEmailInfo({ module_type: 'expense' })
 
     let result = await Generic.sendApprovalEmail(
-      "eva@tabworks.ca",
+      getMailInfo?.email_to ?? '',
       `${type} Report Approved`,
       emailHTML,
-      "paul.kusiar@kps.ca , rajat.kalia@kps.ca",
-      ""
+      getMailInfo?.email_cc ?? '',
+      getMailInfo?.email_bcc ?? ''
     );
     if (result) {
       return {
@@ -959,6 +960,23 @@ Generic.deleteData = async (postData) => {
         reject(err)
       } else {
         resolve(res)
+      }
+    })
+  })
+}
+Generic.getEmailInfo = async (postData) => {
+  return new Promise((resolve, reject) => {
+    let query = `SELECT * FROM kps_emailInfo WHERE module_type = ?`
+    let queryValues = [postData.module_type]
+    db.connection.query(query, queryValues, (err, res) => {
+      if (err) {
+        reject(err)
+      } else {
+        let data = {}
+        if (res.length) {
+          data = res[0]
+        }
+        resolve(data)
       }
     })
   })

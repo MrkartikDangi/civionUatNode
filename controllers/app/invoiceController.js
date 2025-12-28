@@ -264,10 +264,11 @@ exports.generateInvoiceExcel = async (req, res) => {
         };
 
         const buffer = await workbook.xlsx.writeBuffer();
+        let getMailInfo = await generic.getEmailInfo({ module_type: 'invoice' })
         let Maildata = {
-          to: "paul.kusiar@kps.ca , rajat.kalia@kps.ca",
-          cc: "",
-          bcc: "",
+          to: getMailInfo?.email_to ?? '',
+          cc: getMailInfo?.email_cc ?? '',
+          bcc: getMailInfo?.email_bcc ?? '',
           subject: `Invoice Report`,
           html: invoiceReportTemplate(dates),
           attachments: [
