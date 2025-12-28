@@ -909,7 +909,7 @@ Generic.sendExpenseMileageMail = async (postData) => {
 
     }
     const emailHTML = emailTemplate(emailData);
-    let getMailInfo = await this.getEmailInfo({ module_type: 'expense' })
+    let getMailInfo = await Generic.getEmailInfo({ module_type: 'expense' })
 
     let result = await Generic.sendApprovalEmail(
       getMailInfo?.email_to ?? '',
