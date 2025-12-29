@@ -59,7 +59,7 @@ exports.addExpense = async (req, res) => {
       }
       let notificationData = {
         subject: 'Expense',
-        message: `${req.body.user.first_name} ${req.body.user.last_name} has submitted an expense and mileage report with a total amount of $${(req.body?.expenseAmount + req.body.mileageExpense).toFixed(2)}.`,
+        message: `${req.body.user.username} has submitted an expense and mileage report with a total amount of $${(req.body?.expenseAmount + req.body.mileageExpense).toFixed(2)}.`,
         for_boss: '1',
         created_by: req.body.user.userId,
         dateTime: req.body.user.dateTime
@@ -70,8 +70,8 @@ exports.addExpense = async (req, res) => {
         to: getMailInfo?.email_to ?? '',
         cc: getMailInfo?.email_cc ?? '',
         bcc: getMailInfo?.email_bcc ?? '',
-        subject: `Expense submitted by ${req.body.user.first_name} ${req.body.user.last_name}`,
-        html: expenseTemplate({ message: `Please review the submitted expense by ${req.body.user.first_name} ${req.body.user.last_name} in the CIVION.` }),
+        subject: `Expense submitted by ${req.body.user.username}`,
+        html: expenseTemplate({ message: `Please review the submitted expense by ${req.body.user.username} in the CIVION.` }),
         attachments: [],
       };
       await generic.sendEmails(Maildata)

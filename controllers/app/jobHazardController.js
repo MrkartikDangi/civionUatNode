@@ -78,7 +78,7 @@ exports.createJobHazard = async (req, res) => {
         cc: `${getMailInfo?.email_cc ?? ''},${approvalMail}`,
         bcc: getMailInfo?.email_bcc ?? '',
         subject: `Review the submitted JHA`,
-        html: JobHazardTemplate({ message: `Please review the submitted JHA by ${req.body.user.first_name} ${req.body.user.last_name} in the CIVION.` }),
+        html: JobHazardTemplate({ message: `Please review the submitted JHA by ${req.body.user.username} in the CIVION.` }),
         attachments: [],
       };
       await generic.sendEmails(Maildata)
@@ -171,7 +171,7 @@ exports.sendJhaMail = async (req, res) => {
         to: getMailInfo?.email_to ?? '',
         cc: `${getMailInfo?.email_cc ?? ''},${approvalMail}`,
         bcc: getMailInfo?.email_bcc ?? '',
-        subject: `JHA by ${req.body.user.first_name} ${req.body.user.last_name}`,
+        subject: `JHA by ${req.body.user.username}`,
         html: JobHazardTemplate({ message: `Please find the attached Job Hazard Analysis PDF report for your review and reference.` }),
         attachments: [
           {
