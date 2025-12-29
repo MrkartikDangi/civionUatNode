@@ -1,56 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Expense Report Submitted</title>
+  <meta charset="utf-8">
+  <title>Expense Report Submitted</title>
 </head>
 
-<body style="margin: 0; padding: 0; background-color: #eef1f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+<body style="margin: 0; padding: 0; background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding: 40px 0; background-color: #f0f2f5;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0"
+          style="background: #ffffff; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); padding: 40px;">
+          <tr>
+            <td>
+              <div style="text-align: center; margin-bottom: 30px;">
+                <h2 style="color: #2c3e50; margin: 0;">Expense Report Submitted</h2>
+                <p style="color: #888; font-size: 14px; margin-top: 6px;">
+                  Notification from the Expense Management System
+                </p>
+              </div>
+              <p style="font-size: 15px; color: #333333;">
+                Hello,
+              </p>
+              <p style="font-size: 15px; color: #555555; line-height: 1.6;">
+                {{message}}
+              </p>
+              <table width="100%" style="margin: 25px 0;">
+                <tr>
+                  <td style="padding: 15px; background-color: #f9f9f9; border-radius: 8px;">
+                    <p style="margin: 0; font-size: 14px; color: #333;">
+                      <strong>Report Type:</strong> Expense Report
+                    </p>
+                    <p style="margin: 5px 0 0 0; font-size: 14px; color: #333;">
+                      <strong>Status:</strong> Submitted for approval
+                    </p>
+                  </td>
+                </tr>
+              </table>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="padding: 50px 0;">
-        <tr>
-            <td align="center">
-                <!-- Card Container -->
-                <table width="600" cellpadding="0" cellspacing="0"
-                    style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
+              <!-- Footer -->
+              <p style="font-size: 14px; color: #555555; margin-top: 30px;">
+                Warm regards,<br>
+                <strong>Expense Generated System</strong>
+              </p>
 
-                    <!-- Header -->
-                    <tr>
-                        <td style="background: linear-gradient(135deg, #3498db, #2c3e50); padding: 25px; text-align: center;">
-                            <h1 style="margin: 0; font-size: 22px; color: #ffffff;">
-                                Expense Report Submitted
-                            </h1>
-                        </td>
-                    </tr>
-
-                    <!-- Body -->
-                    <tr>
-                        <td style="padding: 30px;">
-                            <p style="font-size: 15px; color: #2c3e50;">
-                                Hello,
-                            </p>
-
-                            <p style="font-size: 15px; color: #555555; line-height: 1.6;">
-                                {{message}}
-                            </p>
-
-                            <p style="font-size: 14px; color: #555555; margin-top: 30px;">
-                                Thanks,<br>
-                            </p>
-                        </td>
-                    </tr>
-
-                    <!-- Footer -->
-                    <tr>
-                        <td style="background-color: #f7f9fc; padding: 15px; text-align: center; font-size: 12px; color: #95a5a6;">
-                            Expense Generated System
-                        </td>
-                    </tr>
-
-                </table>
             </td>
-        </tr>
-    </table>
-
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>

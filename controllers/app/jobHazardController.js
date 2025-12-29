@@ -60,7 +60,7 @@ exports.createJobHazard = async (req, res) => {
       }
       let notificationData = {
         subject: 'Job Hazard',
-        message: `${req.body.user.first_name} ${req.body.user.last_name} has submitted the Job Hazard Analysis`,
+        message: `${req.body.user.username} has submitted the Job Hazard Analysis`,
         for_boss: '1',
         created_by: req.body.user.userId,
         dateTime: req.body.user.dateTime
