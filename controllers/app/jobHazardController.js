@@ -13,7 +13,7 @@ const User = require("../../models/userModel")
 
 exports.getJobHazardData = async (req, res) => {
   try {
-    if (!req.body.user.isBoss) {
+    if (!req.body.user.isBoss && !req.body.user.jhaApproval) {
       req.body.filter.userId = req.body.user.userId
     }
     const data = await JobHazard.getJobHazardData(req.body);

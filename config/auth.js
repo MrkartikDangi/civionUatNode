@@ -33,6 +33,7 @@ module.exports = {
           let result = await apiLogs.addLogs(addLog)
           req.body.user.log_id = result?.insertId
           req.body.user.isBoss = getUserDetails[0]?.is_boss == '1' ? true : false
+          req.body.user.jhaApproval = getUserDetails[0]?.jhaApproval == '1' ? true : false
           req.body.user.latitude = getUserDetails[0]?.latitude
           req.body.user.longitude = getUserDetails[0]?.longitude
           req.body.user.first_name = getUserDetails[0]?.firstName ?? ''
