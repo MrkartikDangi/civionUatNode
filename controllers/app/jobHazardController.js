@@ -75,7 +75,7 @@ exports.createJobHazard = async (req, res) => {
 
       let Maildata = {
         to: getMailInfo?.email_to ?? '',
-        cc: `${getMailInfo?.email_cc ?? ''},${approvalMail}`,
+        cc: getMailInfo?.email_cc ?? '',
         bcc: getMailInfo?.email_bcc ?? '',
         subject: `Review the submitted JHA`,
         html: JobHazardTemplate({ message: `Please review the submitted JHA by ${req.body.user.username} in the CIVION.` }),
