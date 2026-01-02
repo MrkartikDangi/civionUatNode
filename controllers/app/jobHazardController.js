@@ -171,7 +171,7 @@ exports.sendJhaMail = async (req, res) => {
         to: getMailInfo?.email_to ?? '',
         cc: getMailInfo?.email_cc ?? '',
         bcc: getMailInfo?.email_bcc ?? '',
-        subject: `JHA by ${req.body.user.username}`,
+        subject: `Review the Submitted JHA pdf`,
         html: JobHazardTemplate({ message: `Please find the attached Job Hazard Analysis PDF report for your review and reference.` }),
         attachments: [
           {
