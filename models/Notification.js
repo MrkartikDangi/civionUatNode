@@ -8,7 +8,10 @@ notification.getNotificationsList = (postData) => {
   return new Promise((resolve, reject) => {
     let whereCondition = ``
     let values
-    if (!postData.user.isBoss) {
+    if (!postData.user.isBoss && postData.user.jhaApproval) {
+      whereCondition += ` AND userid = ${postData.user.userId} AND for_boss = ? AND jhaApproval = ?`
+      values = ['0', '1']
+    } else if (!postData.user.isBoss) {
       whereCondition += ` AND userid = ${postData.user.userId} AND for_boss = ?`
       values = ['0']
     } else {
@@ -33,6 +36,7 @@ notification.addNotificationData = (postData) => {
       subject: postData.subject,
       message: postData.message,
       for_boss: postData.for_boss || '0',
+      jhaApproval: postData.jhaApproval || '0',
       created_by: postData.created_by,
       created_at: postData.dateTime
     }
