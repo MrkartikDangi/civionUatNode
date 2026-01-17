@@ -508,3 +508,35 @@ exports.getUsersList = async (req, res) => {
     });
   }
 };
+exports.updateUserProfileDetails = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const x = matchedData(req);
+    return generic.validationError(req, res, {
+      message: "Needs to fill required input fields",
+      validationObj: errors.mapped(),
+    });
+  }
+
+  try {
+    db.connection.beginTransaction()
+    const updateUserProfileDetails = await User.updateUserProfileDetails(req.body)
+    if (updateUserProfileDetails.affectedRows) {
+      db.connection.commit()
+      return generic.success(req, res, {
+        message: "User Details updated successfully",
+      });
+    } else {
+      db.connection.rollback()
+      return generic.error(req, res, {
+        message: "failed to update user details"
+      });
+    }
+  } catch (error) {
+    db.connection.rollback()
+    return generic.error(req, res, {
+      status: 500,
+      message: "Something went wrong !"
+    });
+  }
+};

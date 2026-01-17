@@ -1,5 +1,6 @@
 const db = require("../config/db")
 const moment = require('moment')
+const path = require("path")
 
 var User = () => { }
 
@@ -17,11 +18,11 @@ User.checkExistingUser = (postData) => {
   if (postData.filter && postData.filter.password) {
     whereCondition += ` AND password = '${postData.filter.password}'`
   }
-    if (postData.filter && postData.filter.jhaApproval) {
+  if (postData.filter && postData.filter.jhaApproval) {
     whereCondition += ` AND jhaApproval = '${postData.filter.jhaApproval}'`
   }
   return new Promise((resolve, reject) => {
-    let query = `SELECT * FROM kps_users WHERE 1 = 1 ${whereCondition}`
+    let query = `SELECT kps_users.*,IFNULL(DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at,IFNULL(DATE_FORMAT(updated_at, '%Y-%m-%d %H:%i:%s'), '') AS updated_at,IFNULL(CONCAT('${process.env.Base_Url}',folder_name,'/', profile_image), '') AS profile_image_url FROM kps_users WHERE 1 = 1 ${whereCondition}`
     let values = []
     db.connection.query(query, values, (err, res) => {
       if (err) {
@@ -155,6 +156,29 @@ User.updateBossPermission = (postData) => {
     }
     let query = `UPDATE ?? SET ? WHERE id = ?`
     let values = ['kps_users', updatedValues, postData.user.userId]
+    db.connection.query(query, values, (err, res) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res)
+      }
+    })
+  })
+}
+User.updateUserProfileDetails = (postData) => {
+  return new Promise((resolve, reject) => {
+    let updatedValues = {
+      firstName: postData.first_name,
+      lastName: postData.last_name,
+      profile_image: postData.profile_image ? path.basename(postData.profile_image) : '',
+      mileage_rate: postData.mileage_rate,
+      allowanceDistance: postData.allowanceDistance,
+      folder_name: postData.profile_image ? path.dirname(postData.profile_image) : '',
+      updated_by: postData.user.userId,
+      updated_at: postData.user.dateTime,
+    }
+    let query = `UPDATE ?? SET ? WHERE id = ?`
+    let values = ['kps_users', updatedValues, postData.user_id]
     db.connection.query(query, values, (err, res) => {
       if (err) {
         reject(err)
