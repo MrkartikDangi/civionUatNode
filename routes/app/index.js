@@ -582,11 +582,11 @@ router.post(
   oneOf([
     [
       check("user_id", "user id is required").notEmpty(),
-      check("first_name", "First Name is required").notEmpty(),
-      check("last_name", "Last Name is required").notEmpty(),
-      check("mileage_rate", "Mileage Rate is required"),
+      check("first_name", "First Name is required"),
+      check("last_name", "Last Name is required"),
+      check("mileage_rate", "Mileage Rate is required").notEmpty(),
       check("allowanceDistance", "Allowance Distance is required").notEmpty(),
-      check("profile_image", "Profile Image is required").notEmpty()
+      check("profile_image", "Profile Image is required")
 
     ],
   ]),
