@@ -30,7 +30,7 @@ exports.registerUser = async (req, res) => {
     const existingUser = await User.checkExistingUser({ filter: { email: req.body.email } })
     req.body.password = await generic.encodeToBase64(req.body.password)
     if (existingUser.length) {
-      if (existingUser[0]?.username !== null && existingUser[0]?.password !== null) {
+      if (existingUser[0]?.username && existingUser[0]?.username !== null && existingUser[0]?.password && existingUser[0]?.password !== null) {
         db.connection.rollback()
         return generic.success(req, res, {
           message: `${req.body.username} is already registered`,
