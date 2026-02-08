@@ -4,12 +4,12 @@ let connection = null;
 
 function handleDisconnect() {
   const newConnection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    charset: process.env.DB_CHARSET,
+    host: process.env.DB_HOST_DEVELOPEMENT,
+    port: process.env.DB_PORT_DEVELOPEMENT,
+    user: process.env.DB_USER_DEVELOPEMENT,
+    password: process.env.DB_PASSWORD_DEVELOPEMENT,
+    database: process.env.DB_NAME_DEVELOPEMENT,
+    charset: process.env.DB_CHARSET_DEVELOPEMENT,
     timezone: 'Z',
     typeCast: (field, next) => (field.type === 'JSON' ? JSON.parse(field.string()) : next()),
   });
