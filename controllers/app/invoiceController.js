@@ -198,11 +198,13 @@ exports.generateInvoiceExcel = async (req, res) => {
         let startDateMonth = moment(req.body.startDate).format('MMMM')
         let endDateMonth = moment(req.body.endDate).format('MMMM')
 
-        let dynaDesc = `- for the month of ${startDateMonth}`
+        let fromDate = moment(req.body.startDate).format('MMM DD,YYYY')
+        let endDate = moment(req.body.endDate).format('MMM DD,YYYY')
+        let dynaDesc = ` for the month of ${startDateMonth}`
         if (startDateMonth !== endDateMonth) {
-          dynaDesc += ` and ${endDateMonth} specially from ${from} to ${to}`
+          dynaDesc += ` and ${endDateMonth} specifically from ${fromDate} to ${endDate}`
         }else{
-          dynaDesc += ` specially from ${from} to ${to}`
+          dynaDesc += ` specifically from ${fromDate} to ${endDate}`
         }
 
         for (let i = 0; i < data.length; i++) {

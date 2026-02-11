@@ -48,7 +48,7 @@ module.exports = {
     } catch (error) {
       return generic.error(req, res, {
         status: 403,
-        message: 'Invalid token. Token has expired.',
+        message: 'Login session expired,Please logout and then login.',
       });
     }
 
