@@ -6,6 +6,7 @@ const dailyDiary = () => { }
 dailyDiary.getDailyDiary = (postData) => {
     return new Promise((resolve, reject) => {
         let whereCondition = ``
+        let orderCondition = ` ORDER BY created_at ASC`
         if (postData.filter && postData.filter.userId) {
             whereCondition += ` AND userId = ${postData.filter.userId}`
         }
@@ -20,6 +21,9 @@ dailyDiary.getDailyDiary = (postData) => {
         }
         if (postData.filter && postData.filter.startDate && postData.filter.endDate) {
             whereCondition += ` AND selectedDate BETWEEN '${postData.filter.startDate}' AND '${postData.filter.endDate}' `
+        }
+        if (postData.filter && postData.filter.type) {
+            orderCondition += ` ORDER BY kdd.created_at DESC LIMIT 1;`
         }
         let query = `SELECT kdd.*,ku.username,IFNULL(DATE_FORMAT(kdd.created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at,IFNULL(DATE_FORMAT(kdd.updated_at, '%Y-%m-%d %H:%i:%s'), '') AS updated_at,IFNULL(DATE_FORMAT(kdd.selectedDate, '%Y-%m-%d'), '') AS selectedDate ,
                                          CASE  
@@ -41,7 +45,7 @@ dailyDiary.getDailyDiary = (postData) => {
                                         )
                                         ELSE JSON_ARRAY()
                                     END AS logo
-        FROM kps_daily_diary kdd LEFT JOIN kps_users ku ON ku.id = kdd.userId WHERE 1 = 1 ${whereCondition} ORDER BY created_at ASC`
+        FROM kps_daily_diary kdd LEFT JOIN kps_users ku ON ku.id = kdd.userId WHERE 1 = 1 ${whereCondition} ${orderCondition}`
 
         let queryValues = []
         db.connection.query(query, queryValues, (err, res) => {
