@@ -35,6 +35,7 @@ exports.getWeeklyReport = async (req, res) => {
 
     }
   } catch (error) {
+    console.log('error',error)
     return generic.error(req, res, {
       status: 500,
       message: "something went wrong!",
