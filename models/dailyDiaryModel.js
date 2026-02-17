@@ -23,7 +23,7 @@ dailyDiary.getDailyDiary = (postData) => {
             whereCondition += ` AND selectedDate BETWEEN '${postData.filter.startDate}' AND '${postData.filter.endDate}' `
         }
         if (postData.filter && postData.filter.type) {
-            orderCondition += ` ORDER BY kdd.created_at DESC LIMIT 1;`
+            orderCondition = ` ORDER BY kdd.created_at DESC LIMIT 1;`
         }
         let query = `SELECT kdd.*,ku.username,IFNULL(DATE_FORMAT(kdd.created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at,IFNULL(DATE_FORMAT(kdd.updated_at, '%Y-%m-%d %H:%i:%s'), '') AS updated_at,IFNULL(DATE_FORMAT(kdd.selectedDate, '%Y-%m-%d'), '') AS selectedDate ,
                                          CASE  

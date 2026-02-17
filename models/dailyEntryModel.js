@@ -23,7 +23,7 @@ dailyEntry.getDailyEntry = (postData) => {
       whereCondition += ` AND selected_date BETWEEN '${postData.filter.startDate}' AND '${postData.filter.endDate}' `
     }
     if (postData.filter && postData.filter.type) {
-      orderCondition += ` ORDER BY kde.created_at DESC LIMIT 1;`
+      orderCondition = ` ORDER BY kde.created_at DESC LIMIT 1;`
     }
     let query = `SELECT kde.*,IFNULL(DATE_FORMAT(kde.created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at,IFNULL(DATE_FORMAT(kde.updated_at, '%Y-%m-%d %H:%i:%s'), '') AS updated_at,IFNULL(DATE_FORMAT(kde.selected_date, '%Y-%m-%d'), '') AS selected_date,
                         COALESCE(
