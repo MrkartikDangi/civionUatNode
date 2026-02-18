@@ -64,10 +64,8 @@ exports.createWeeklyEntry = async (req, res) => {
     const createWeeklyEntry = await weeklyEntry.createWeeklyEntry(req.body)
     if (createWeeklyEntry.insertId) {
       let weeklyEntryId = createWeeklyEntry.insertId
-      console.log('weeklyEntryId',weeklyEntryId)
       if (req.body.photoFiles && req.body.photoFiles.length) {
         for (let row of req.body.photoFiles) {
-          console.log('row',row)
           row.userId = req.body.user.userId
           row.dateTime = req.body.user.dateTime
           row.weeklyEntryId = weeklyEntryId
@@ -89,7 +87,6 @@ exports.createWeeklyEntry = async (req, res) => {
 
     }
   } catch (error) {
-    console.log('error',error)
     db.connection.rollback()
     return generic.error(req, res, {
       status: 500,
