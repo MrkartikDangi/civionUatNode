@@ -67,10 +67,10 @@ exports.createWeeklyEntry = async (req, res) => {
       console.log('weeklyEntryId',weeklyEntryId)
       if (req.body.photoFiles && req.body.photoFiles.length) {
         for (let row of req.body.photoFiles) {
+          console.log('row',row)
           row.userId = req.body.user.userId
           row.dateTime = req.body.user.dateTime
           row.weeklyEntryId = weeklyEntryId
-          console.log('row',row)
           await weeklyEntry.addPhotoFilesData(row)
         }
       }
