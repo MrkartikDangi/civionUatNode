@@ -117,6 +117,7 @@ weeklyEntry.createWeeklyEntry = (postData) => {
   })
 }
 weeklyEntry.addPhotoFilesData = (postData) => {
+  console.log('postData',postData)
   return new Promise((resolve, reject) => {
     let insertedData = {
       weekly_entry_id: postData.weeklyEntryId,
