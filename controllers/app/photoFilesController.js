@@ -107,7 +107,6 @@ exports.createPhotoFiles = async (req, res) => {
   try {
     db.connection.beginTransaction()
     if (req.body.imageurl && req.body.imageurl.length) {
-      await generic.initializeOneDrive()
       let getScheduleData = await Schedule.getScheduleData({ filter: { schedule_id: req.body.schedule_id } })
       for (let row of req.body.imageurl) {
         row.schedule_id = req.body.schedule_id
@@ -117,6 +116,7 @@ exports.createPhotoFiles = async (req, res) => {
         row.folder_name = path.dirname(row.path);
         await PhotoFiles.addPhotoFileData(row)
         if (process.env.DEVTYPE == 'Prod') {
+          await generic.initializeOneDrive()
           let data = {
             filePath: `${process.env.Base_Url}${row.folder_name}/${row.fileName}`,
             fileName: row.fileName,
