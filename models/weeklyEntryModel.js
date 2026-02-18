@@ -20,7 +20,7 @@ weeklyEntry.getWeeklyEntry = (postData) => {
       whereCondition += ` AND kwe.userId = ${postData.filter.userId}`
     }
     if (postData.filter && postData.filter.type) {
-      orderCondition += ` ORDER BY kwe.created_at DESC LIMIT 1;`
+      orderCondition = ` ORDER BY kwe.created_at DESC LIMIT 1;`
     }
     let query = `SELECT  kwe.*,IFNULL(DATE_FORMAT(kwe.created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at,IFNULL(DATE_FORMAT(kwe.updated_at, '%Y-%m-%d %H:%i:%s'), '') AS updated_at,IFNULL(DATE_FORMAT(kwe.reportDate, '%Y-%m-%d'), '') AS reportDate,IFNULL(DATE_FORMAT(kwe.weekStartDate, '%Y-%m-%d'), '') AS weekStartDate,IFNULL(DATE_FORMAT(kwe.weekEndDate, '%Y-%m-%d'), '') AS weekEndDate ,kps_users.username,kps_users.email, CASE  
                          WHEN kwe.logo IS NOT NULL THEN (
