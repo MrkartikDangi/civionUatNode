@@ -126,13 +126,10 @@ exports.createPhotoFiles = async (req, res) => {
         }
         let notificationData = {
           userId: req.body.user.userId,
-          title: 'Order Update',
-          body: 'Your order has been shipped',
-          data: {
-            type: 'order',
-            orderId: '789',
-            screen: 'orderDetails'
-          }
+          title: row.fileName,
+          body: 'Image uploaded successfully',
+          image: `${process.env.Base_Url}${row.folder_name}/${row.fileName}`,
+          data: {}
         }
         await generic.sendNotification(notificationData)
       }
