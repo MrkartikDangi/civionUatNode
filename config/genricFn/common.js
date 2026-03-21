@@ -16,7 +16,7 @@ const expense = require("../../models/expenseModel")
 const moment = require("moment")
 const db = require("../../config/db")
 const apiLogs = require("../../models/logsModel")
-const fcm = require("../../config/firebase")
+const fcmNotification = require("../../config/firebase")
 // const oneDriveApi = require("onedrive-api")
 const User = require("../../models/userModel")
 // const pdfParse = require('pdf-parse');
@@ -1016,7 +1016,7 @@ Generic.sendNotification = async (postData) => {
       },
     };
 
-    const response = await admin.messaging().send(message);
+    const response = await fcmNotification.messaging().send(message);
 
     console.log('Notification sent:', response);
 
