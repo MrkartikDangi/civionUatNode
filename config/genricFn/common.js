@@ -16,7 +16,9 @@ const expense = require("../../models/expenseModel")
 const moment = require("moment")
 const db = require("../../config/db")
 const apiLogs = require("../../models/logsModel")
+const fcm = require("../../config/firebase")
 // const oneDriveApi = require("onedrive-api")
+const User = require("../../models/userModel")
 // const pdfParse = require('pdf-parse');
 // const { PDFDocument } = require('pdf-lib');
 // const PDFParser = require('pdf2json');
@@ -981,7 +983,86 @@ Generic.getEmailInfo = async (postData) => {
     })
   })
 }
+Generic.sendNotification = async (postData) => {
+  try {
+    let userDetails = await User.checkExistingUser({ filter: { userId: postData.userId } });
 
+    const message = {
+      token: userDetails[0]?.fcm_device_id ?? '',
+
+      notification: {
+        title: postData.title,
+        body: postData.body,
+        image: postData.image || undefined
+      },
+
+      data: postData.data || {},
+
+      android: {
+        notification: {
+          image: postData.image || undefined
+        },
+      },
+
+      apns: {
+        payload: {
+          aps: {
+            'mutable-content': 1,
+          },
+        },
+        fcm_options: {
+          image: postData.image || undefined,
+        },
+      },
+    };
+
+    const response = await admin.messaging().send(message);
+
+    console.log('Notification sent:', response);
+
+  } catch (error) {
+    console.error('Error sending notification:', error);
+  }
+};
+Generic.insertData = async (tableName, data) => {
+  try {
+    let columns = Object.keys(data).join(', ');
+    let placeholders = Object.keys(data).map(() => '?').join(', ');
+    let values = Object.values(data);
+    let query = `INSERT INTO ${tableName} (${columns}) VALUES (${placeholders})`;
+    db.connection.query(query, values, (err, res) => {
+      if (err) {
+        return { status: false, message: 'Failed to update data' }
+      } else {
+        return { status: false, message: 'successfully updated data', id: res.insertId }
+      }
+    })
+
+  } catch (error) {
+    console.error('Failed to update data', error);
+  }
+}
+Generic.updateData = async (tableName, data, condition) => {
+  try {
+    let setClause = Object.keys(data).map(key => `${key} = ?`).join(', ');
+    let whereClause = Object.keys(condition).map(key => `${key} = ?`).join(' AND ');
+    let query = `UPDATE ${tableName} SET ${setClause} WHERE ${whereClause}`;
+    let values = [
+      ...Object.values(data),
+      ...Object.values(condition)
+    ]
+    db.connection.query(query, values, (err, res) => {
+      if (err) {
+        return { status: false, message: 'Failed to update data' }
+      } else {
+        return { status: false, message: 'successfully updated data' }
+      }
+    })
+
+  } catch (error) {
+    console.error('Failed to update data', error);
+  }
+}
 
 
 module.exports = Generic;
