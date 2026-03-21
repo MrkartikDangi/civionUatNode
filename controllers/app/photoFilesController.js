@@ -124,6 +124,17 @@ exports.createPhotoFiles = async (req, res) => {
           }
           await generic.uploadFileToOneDrive(data)
         }
+        let notificationData = {
+          userId: req.body.user.userId,
+          title: 'Order Update',
+          body: 'Your order has been shipped',
+          data: {
+            type: 'order',
+            orderId: '789',
+            screen: 'orderDetails'
+          }
+        }
+        await generic.sendNotification(notificationData)
       }
       db.connection.commit()
       return generic.success(req, res, {
