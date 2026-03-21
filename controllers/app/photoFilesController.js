@@ -128,7 +128,7 @@ exports.createPhotoFiles = async (req, res) => {
           userId: req.body.user.userId,
           title: row.fileName,
           body: 'Image uploaded successfully',
-          image: `https://plus.unsplash.com/premium_photo-1773833960283-241a4bf303c1?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw3fHx8ZW58MHx8fHx8`,
+          image: `${process.env.Base_Url}${row.folder_name}/${row.fileName}`,
           data: {}
         }
         await generic.sendNotification(notificationData)
