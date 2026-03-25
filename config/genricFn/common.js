@@ -1086,13 +1086,13 @@ Generic.selectData = async (tableName, condition = {}, columns = '*') => {
 
       db.connection.query(query, values, (err, res) => {
         if (err) {
-          reject({ status: false, message: 'Failed to fetch data', error: err });
+          reject(err);
         } else {
           let data = {}
           if (res.length) {
             data = res[0]
           }
-          resolve({ status: true, data: data });
+          resolve(data);
         }
       });
 
