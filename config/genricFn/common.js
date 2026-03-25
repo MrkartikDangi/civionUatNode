@@ -671,7 +671,7 @@ Generic.getAccessToken = async () => {
     });
     let result = await oneDrive.saveOneDriveToken(response.data);
     if (result.insertId) {
-      return { status: true, message: `OneDrive token Successfully generated`}
+      return { status: true, message: `OneDrive token Successfully generated` }
     } else {
       return { status: false, message: `Failed to generate one drive auth token` }
     }
@@ -980,10 +980,15 @@ Generic.getEmailInfo = async (postData) => {
 }
 Generic.sendNotification = async (postData) => {
   try {
-    let userDetails = await User.checkExistingUser({ filter: { userId: postData.userId } });
-
+    let fcmToken = ''
+    if (postData.fcmDeviceId && postData.fcmDeviceId !== "") {
+      fcmToken = postData.fcmDeviceId
+    } else {
+      let userDetails = await User.checkExistingUser({ filter: { userId: postData.userId } });
+      fcmToken = userDetails[0]?.fcm_device_id ?? ''
+    }
     const message = {
-      token: userDetails[0]?.fcm_device_id ?? '',
+      token: fcmToken,
 
       notification: {
         title: postData.title,
@@ -1020,44 +1025,82 @@ Generic.sendNotification = async (postData) => {
   }
 };
 Generic.insertData = async (tableName, data) => {
-  try {
-    let columns = Object.keys(data).join(', ');
-    let placeholders = Object.keys(data).map(() => '?').join(', ');
-    let values = Object.values(data);
-    let query = `INSERT INTO ${tableName} (${columns}) VALUES (${placeholders})`;
-    db.connection.query(query, values, (err, res) => {
-      if (err) {
-        return { status: false, message: 'Failed to update data' }
-      } else {
-        return { status: false, message: 'successfully updated data', id: res.insertId }
-      }
-    })
+  return new Promise((resolve, reject) => {
+    try {
+      let columns = Object.keys(data).join(', ');
+      let placeholders = Object.keys(data).map(() => '?').join(', ');
+      let values = Object.values(data);
+      let query = `INSERT INTO ${tableName} (${columns}) VALUES (${placeholders})`;
+      db.connection.query(query, values, (err, res) => {
+        if (err) {
+          reject({ status: false, message: 'Failed to update data' })
+        } else {
+          resolve({ status: false, message: 'successfully updated data', id: res.insertId })
+        }
+      })
 
-  } catch (error) {
-    console.error('Failed to update data', error);
-  }
+    } catch (error) {
+      reject({ status: false, message: 'Error in  query', error });
+    }
+  })
 }
 Generic.updateData = async (tableName, data, condition) => {
-  try {
-    let setClause = Object.keys(data).map(key => `${key} = ?`).join(', ');
-    let whereClause = Object.keys(condition).map(key => `${key} = ?`).join(' AND ');
-    let query = `UPDATE ${tableName} SET ${setClause} WHERE ${whereClause}`;
-    let values = [
-      ...Object.values(data),
-      ...Object.values(condition)
-    ]
-    db.connection.query(query, values, (err, res) => {
-      if (err) {
-        return { status: false, message: 'Failed to update data' }
-      } else {
-        return { status: false, message: 'successfully updated data' }
-      }
-    })
+  return new Promise((resolve, reject) => {
+    try {
+      let setClause = Object.keys(data).map(key => `${key} = ?`).join(', ');
+      let whereClause = Object.keys(condition).map(key => `${key} = ?`).join(' AND ');
+      let query = `UPDATE ${tableName} SET ${setClause} WHERE ${whereClause}`;
+      let values = [
+        ...Object.values(data),
+        ...Object.values(condition)
+      ]
+      db.connection.query(query, values, (err, res) => {
+        if (err) {
+          reject({ status: false, message: 'Failed to update data' })
+        } else {
+          resolve({ status: false, message: 'successfully updated data' })
+        }
+      })
 
-  } catch (error) {
-    console.error('Failed to update data', error);
-  }
+    } catch (error) {
+      reject({ status: false, message: 'Error in  query', error });
+    }
+  })
 }
+Generic.selectData = async (tableName, condition = {}, columns = '*') => {
+  return new Promise((resolve, reject) => {
+    try {
+      let cols = Array.isArray(columns) ? columns.join(', ') : columns;
+      let whereClause = '';
+      let values = [];
+
+      if (Object.keys(condition).length > 0) {
+        whereClause = 'WHERE ' + Object.keys(condition)
+          .map(key => `${key} = ?`)
+          .join(' AND ');
+
+        values = Object.values(condition);
+      }
+
+      let query = `SELECT ${cols} FROM ${tableName} ${whereClause}`;
+
+      db.connection.query(query, values, (err, res) => {
+        if (err) {
+          reject({ status: false, message: 'Failed to fetch data', error: err });
+        } else {
+          let data = {}
+          if (res.length) {
+            data = res[0]
+          }
+          resolve({ status: true, data: data });
+        }
+      });
+
+    } catch (error) {
+      reject({ status: false, message: 'Error in select query', error });
+    }
+  });
+};
 
 
 module.exports = Generic;

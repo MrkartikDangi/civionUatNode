@@ -65,6 +65,15 @@ exports.addExpense = async (req, res) => {
         dateTime: req.body.user.dateTime
       }
       await notification.addNotificationData(notificationData)
+      let userFcmToken = await generic.selectData('kps_users', { is_boss: '1' }, ['fcm_device_id'])
+      let notificationFcmData = {
+        fcmToken: userFcmToken.fcm_device_id,
+        title: 'Expense',
+        body: `${req.body.user.username} has submitted an expense and mileage report with a total amount of $${(req.body?.expenseAmount + req.body.mileageExpense).toFixed(2)}.`,
+        image: '',
+        data: {}
+      }
+      await generic.sendNotification(notificationFcmData)
       let getMailInfo = await generic.getEmailInfo({ module_type: 'expense' })
       let Maildata = {
         to: getMailInfo?.email_to ?? '',
@@ -192,6 +201,14 @@ exports.updateExpenseItemStatus = async (req, res) => {
             dateTime: req.body.user.dateTime
           }
           await notification.addNotificationData(notificationData)
+          let notificationFcmData = {
+            userId: getExpenseDetails[0]?.userId,
+            title: 'Expense',
+            body: `Your expense report has been ${data.status}.`,
+            image: '',
+            data: {}
+          }
+          await generic.sendNotification(notificationFcmData)
         }
       }
     } else {
@@ -215,6 +232,14 @@ exports.updateExpenseItemStatus = async (req, res) => {
             dateTime: req.body.user.dateTime
           }
           await notification.addNotificationData(notificationData)
+          let notificationFcmData = {
+            userId: getMileageDetails[0]?.user_id,
+            title: 'Mileage',
+            body: `Your mileage report has been ${data.status}.`,
+            image: '',
+            data: {}
+          }
+          await generic.sendNotification(notificationFcmData)
         }
       }
     }
