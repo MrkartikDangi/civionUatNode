@@ -66,7 +66,6 @@ exports.addExpense = async (req, res) => {
       }
       await notification.addNotificationData(notificationData)
       let userFcmToken = await generic.selectData('kps_users', { is_boss: '1' }, ['fcm_device_id'])
-      console.log('userFcmToken',userFcmToken)
       let notificationFcmData = {
         fcmToken: userFcmToken.fcm_device_id,
         title: 'Expense',
@@ -74,7 +73,6 @@ exports.addExpense = async (req, res) => {
         image: '',
         data: {}
       }
-      console.log('notificationFcmData',notificationFcmData)
       await generic.sendNotification(notificationFcmData)
       let getMailInfo = await generic.getEmailInfo({ module_type: 'expense' })
       let Maildata = {
