@@ -67,7 +67,7 @@ exports.createJobHazard = async (req, res) => {
         dateTime: req.body.user.dateTime
       }
       await notification.addNotificationData(notificationData)
-      let userFcmToken = await generic.selectData('kps_jobhazard', { jhaApproval: '1' }, ['fcm_device_id'])
+      let userFcmToken = await generic.selectData('kps_users', { jhaApproval: '1' }, ['fcm_device_id'])
       if (userFcmToken.length) {
         let notificationFcmData = {
           fcmDeviceId: userFcmToken[0]?.fcm_device_id,
@@ -111,7 +111,6 @@ exports.createJobHazard = async (req, res) => {
     }
 
   } catch (error) {
-    console.log('error',error)
     db.connection.rollback()
     return generic.error(req, res, {
       status: 500,
