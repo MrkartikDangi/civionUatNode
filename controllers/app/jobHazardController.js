@@ -69,7 +69,7 @@ exports.createJobHazard = async (req, res) => {
       await notification.addNotificationData(notificationData)
       let userFcmToken = await generic.selectData('kps_jobhazard', { jhaApproval: '1' }, ['fcm_device_id'])
       let notificationFcmData = {
-        fcmToken: userFcmToken.fcm_device_id,
+        fcmDeviceId: userFcmToken.fcm_device_id,
         title: 'Job Hazard',
         body: `${req.body.user.username} has submitted the Job Hazard Analysis`,
         image: '',

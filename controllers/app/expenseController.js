@@ -67,7 +67,7 @@ exports.addExpense = async (req, res) => {
       await notification.addNotificationData(notificationData)
       let userFcmToken = await generic.selectData('kps_users', { is_boss: '1' }, ['fcm_device_id'])
       let notificationFcmData = {
-        fcmToken: userFcmToken.fcm_device_id,
+        fcmDeviceId: userFcmToken.fcm_device_id,
         title: 'Expense',
         body: `${req.body.user.username} has submitted an expense and mileage report with a total amount of $${(req.body?.expenseAmount + req.body.mileageExpense).toFixed(2)}.`,
         image: '',
