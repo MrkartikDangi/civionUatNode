@@ -65,17 +65,21 @@ exports.addExpense = async (req, res) => {
         dateTime: req.body.user.dateTime
       }
       await notification.addNotificationData(notificationData)
-      let userFcmToken = await generic.selectData('kps_users', { is_boss: '1',fcm_device_id: 'is not null' }, ['fcm_device_id'])
-      console.log('userFcmToken',userFcmToken)
-      let notificationFcmData = {
-        fcmDeviceId: userFcmToken.fcm_device_id,
-        title: 'Expense',
-        body: `${req.body.user.username} has submitted an expense and mileage report with a total amount of $${(req.body?.expenseAmount + req.body.mileageExpense).toFixed(2)}.`,
-        image: '',
-        data: {}
+      let userFcmToken = await generic.selectData('kps_users', { is_boss: '1', fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
+      if (userFcmToken.length) {
+        for (let row of userFcmToken) {
+          console.log('userFcmToken', row)
+          let notificationFcmData = {
+            fcmDeviceId: row.fcm_device_id,
+            title: 'Expense',
+            body: `${req.body.user.username} has submitted an expense and mileage report with a total amount of $${(req.body?.expenseAmount + req.body.mileageExpense).toFixed(2)}.`,
+            image: '',
+            data: {}
+          }
+          console.log('notificationFcmData', notificationFcmData)
+          await generic.sendNotification(notificationFcmData)
+        }
       }
-      console.log('notificationFcmData',notificationFcmData)
-      await generic.sendNotification(notificationFcmData)
       let getMailInfo = await generic.getEmailInfo({ module_type: 'expense' })
       let Maildata = {
         to: getMailInfo?.email_to ?? '',

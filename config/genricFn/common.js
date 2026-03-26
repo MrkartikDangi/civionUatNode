@@ -980,7 +980,7 @@ Generic.getEmailInfo = async (postData) => {
 }
 Generic.sendNotification = async (postData) => {
   try {
-    console.log('postData',postData)
+    console.log('postData', postData)
     let fcmToken = ''
     if (postData.fcmDeviceId && postData.fcmDeviceId !== "") {
       fcmToken = postData.fcmDeviceId
@@ -988,7 +988,7 @@ Generic.sendNotification = async (postData) => {
       let userDetails = await User.checkExistingUser({ filter: { userId: postData.userId } });
       fcmToken = userDetails[0]?.fcm_device_id ?? ''
     }
-    console.log('fcmToken',fcmToken)
+    console.log('fcmToken', fcmToken)
     const message = {
       token: fcmToken,
 
@@ -1077,31 +1077,68 @@ Generic.selectData = async (tableName, condition = {}, columns = '*') => {
       let values = [];
 
       if (Object.keys(condition).length > 0) {
-        whereClause = 'WHERE ' + Object.keys(condition)
-          .map(key => `${key} = ?`)
-          .join(' AND ');
+        let conditions = [];
 
-        values = Object.values(condition);
+        Object.keys(condition).forEach(key => {
+          let value = condition[key];
+
+          // IS NULL
+          if (value === null) {
+            conditions.push(`${key} IS NULL`);
+          }
+
+          // IS NOT NULL
+          else if (value === 'IS NOT NULL') {
+            conditions.push(`${key} IS NOT NULL`);
+          }
+
+          // NOT EQUAL
+          else if (typeof value === 'object' && value.operator === '!=') {
+            conditions.push(`${key} != ?`);
+            values.push(value.value);
+          }
+
+          // IN clause
+          else if (Array.isArray(value)) {
+            let placeholders = value.map(() => '?').join(', ');
+            conditions.push(`${key} IN (${placeholders})`);
+            values.push(...value);
+          }
+
+          // LIKE
+          else if (typeof value === 'object' && value.operator === 'LIKE') {
+            conditions.push(`${key} LIKE ?`);
+            values.push(value.value);
+          }
+
+          // Default =
+          else {
+            conditions.push(`${key} = ?`);
+            values.push(value);
+          }
+        });
+
+        whereClause = 'WHERE ' + conditions.join(' AND ');
       }
 
       let query = `SELECT ${cols} FROM ${tableName} ${whereClause}`;
 
-      console.log('query',query)
+      console.log('query:', query);
+      console.log('values:', values);
 
       db.connection.query(query, values, (err, res) => {
         if (err) {
-          reject(err);
-        } else {
-          let data = {}
-          if (res.length) {
-            data = res[0]
-          }
-          resolve(data);
+          return reject(err);
         }
+        resolve(res); // return all rows
       });
 
     } catch (error) {
-      reject({ status: false, message: 'Error in select query', error });
+      reject({
+        status: false,
+        message: 'Error in select query',
+        error
+      });
     }
   });
 };
