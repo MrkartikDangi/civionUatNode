@@ -980,6 +980,7 @@ Generic.getEmailInfo = async (postData) => {
 }
 Generic.sendNotification = async (postData) => {
   try {
+    console.log('postData',postData)
     let fcmToken = ''
     if (postData.fcmDeviceId && postData.fcmDeviceId !== "") {
       fcmToken = postData.fcmDeviceId

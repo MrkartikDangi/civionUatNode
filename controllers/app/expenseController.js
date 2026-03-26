@@ -73,6 +73,7 @@ exports.addExpense = async (req, res) => {
         image: '',
         data: {}
       }
+      console.log('notificationFcmData',notificationFcmData)
       await generic.sendNotification(notificationFcmData)
       let getMailInfo = await generic.getEmailInfo({ module_type: 'expense' })
       let Maildata = {
