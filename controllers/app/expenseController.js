@@ -65,7 +65,7 @@ exports.addExpense = async (req, res) => {
         dateTime: req.body.user.dateTime
       }
       await notification.addNotificationData(notificationData)
-      let userFcmToken = await generic.selectData('kps_users', { is_boss: '1' }, ['fcm_device_id'])
+      let userFcmToken = await generic.selectData('kps_users', { is_boss: '1',fcm_device_id: 'is not null' }, ['fcm_device_id'])
       console.log('userFcmToken',userFcmToken)
       let notificationFcmData = {
         fcmDeviceId: userFcmToken.fcm_device_id,
