@@ -1002,6 +1002,7 @@ Generic.sendNotification = async (postData) => {
 
       android: {
         notification: {
+          sound: "default",
           image: postData.image || undefined
         },
       },
@@ -1009,6 +1010,7 @@ Generic.sendNotification = async (postData) => {
       apns: {
         payload: {
           aps: {
+            sound: "default",
             'mutable-content': 1,
           },
         },
