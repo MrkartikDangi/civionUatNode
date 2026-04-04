@@ -545,7 +545,8 @@ exports.logout = async (req, res) => {
   try {
     db.connection.beginTransaction()
     let data = {
-      fcm_device_id: ''
+      fcm_device_id: '',
+      updated_at: req.body.user.dateTime,
     }
     let logout = await generic.updateData('kps_users', data, { id: req.body.user.userId })
     if (logout.status) {
