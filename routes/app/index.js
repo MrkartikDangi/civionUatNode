@@ -133,7 +133,7 @@ router.post(
   ]),
   userController.login,
 );
-router.post("/auth/logout",userController.logout);
+router.post("/auth/logout",authenticateJWT,userController.logout);
 router.post(
   "/auth/changePassword",
   oneOf([[check("currentPassword", "currentPassword is required").notEmpty()]]),
