@@ -541,3 +541,30 @@ exports.updateUserProfileDetails = async (req, res) => {
     });
   }
 };
+exports.logout = async (req, res) => {
+  try {
+    db.connection.beginTransaction()
+    let data = {
+      fcm_device_id: ''
+    }
+    let logout = await generic.updateData('kps_users', data, { id: req.body.user.userId })
+    if (logout.status) {
+      db.connection.commit()
+      return generic.success(req, res, {
+        message: "Logout successfully",
+      });
+    } else {
+      db.connection.rollback()
+      return generic.error(req, res, {
+        message: "Failed to logout"
+      });
+    }
+  } catch (error) {
+    console.log('error', error)
+    db.connection.rollback()
+    return generic.error(req, res, {
+      status: 500,
+      message: "Something went wrong !"
+    });
+  }
+};
