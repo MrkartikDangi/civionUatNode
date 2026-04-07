@@ -9,7 +9,7 @@ notification.getNotificationsList = (postData) => {
     let whereCondition = ``
     let values
     if (!postData.user.isBoss && postData.user.jhaApproval) {
-      whereCondition += ` AND userid = ${postData.user.userId} AND for_boss = ? AND jhaApproval = ?`
+      whereCondition += ` AND for_boss = ? AND jhaApproval = ?`
       values = ['0', '1']
     } else if (!postData.user.isBoss) {
       whereCondition += ` AND userid = ${postData.user.userId} AND for_boss = ?`
@@ -19,7 +19,6 @@ notification.getNotificationsList = (postData) => {
       values = ['1']
     }
     let query = `SELECT id,subject,message,is_read,IFNULL(DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at FROM kps_notifications WHERE 1 = 1 ${whereCondition} ORDER BY id DESC`
-    console.log('query',query)
     db.connection.query(query, values, (err, res) => {
       if (err) {
         reject(err)
