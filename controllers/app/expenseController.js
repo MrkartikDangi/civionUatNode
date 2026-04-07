@@ -68,6 +68,7 @@ exports.addExpense = async (req, res) => {
       let userFcmToken = await generic.selectData('kps_users', { is_boss: '1', fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
       if (userFcmToken.length) {
         for (let row of userFcmToken) {
+          console.log('row-->',row.userFcmToken)
           if (row?.userFcmToken) {
             let notificationFcmData = {
               fcmDeviceId: row.fcm_device_id,
