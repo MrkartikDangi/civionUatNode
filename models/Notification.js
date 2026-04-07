@@ -19,6 +19,7 @@ notification.getNotificationsList = (postData) => {
       values = ['1']
     }
     let query = `SELECT id,subject,message,is_read,IFNULL(DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at FROM kps_notifications WHERE 1 = 1 ${whereCondition} ORDER BY id DESC`
+    console.log('query',query)
     db.connection.query(query, values, (err, res) => {
       if (err) {
         reject(err)
