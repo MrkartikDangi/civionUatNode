@@ -3,6 +3,7 @@ const { validationResult, matchedData } = require("express-validator");
 const path = require("path");
 const moment = require("moment");
 const leaveModel = require("../../models/leaveModel")
+const db = require("../../config/db")
 
 
 exports.getLeaveTypes = async (req, res) => {
