@@ -608,8 +608,6 @@ router.post(
       check("from_date", "From Date is required").notEmpty(),
       check("to_date", "To Date is required").notEmpty(),
       check("reason", "reason is required").notEmpty(),
-      check("status", "Status is required").notEmpty(),
-      check("applied_on", "Applied On is required").notEmpty()
     ],
   ]),
   authenticateJWT,
