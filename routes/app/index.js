@@ -600,6 +600,9 @@ userController.updateUserProfileDetails,
 );
 router.post("/leave/getLeaveTypes",authenticateJWT,leaveController.getLeaveTypes);
 
+router.post("/leave/getLeaveList",authenticateJWT,leaveController.getLeaveList);
+
+
 router.post(
   "/leave/addLeaveData",
   oneOf([

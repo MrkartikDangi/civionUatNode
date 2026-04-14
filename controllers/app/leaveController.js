@@ -21,6 +21,21 @@ exports.getLeaveTypes = async (req, res) => {
     }
 };
 
+exports.getLeaveList = async (req, res) => {
+    try {
+        const getLeavesList = await leaveModel.getLeavesList(req.body);
+        return generic.success(req, res, {
+            message: "Leaves List",
+            data: getLeavesList,
+        });
+    } catch (error) {
+        return generic.error(req, res, {
+            status: 500,
+            message: "Something went wrong !"
+        });
+    }
+};
+
 exports.addLeaveData = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
