@@ -1045,6 +1045,7 @@ Generic.insertData = async (tableName, data) => {
       })
 
     } catch (error) {
+      console.log('error',error)
       reject({ status: false, message: 'Error in  query', error });
     }
   })
