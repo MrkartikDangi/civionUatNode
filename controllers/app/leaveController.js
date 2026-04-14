@@ -40,7 +40,6 @@ exports.addLeaveData = async (req, res) => {
             }
         }
         const checkExistingLeaves = await leaveModel.getLeavesList(existingUserLeaves);
-        console.log('checkExistingLeaves',checkExistingLeaves)
         if (checkExistingLeaves.length) {
             db.connection.rollback()
             return generic.error(req, res, {
@@ -48,7 +47,7 @@ exports.addLeaveData = async (req, res) => {
             });
         }
         let insertLeaveData = {
-            userId: req.body.user.userId,
+            user_id: req.body.user.userId,
             from_date: req.body.from_date,
             to_date: req.body.to_date,
             leave_type_id: req.body.leave_type_id,
@@ -56,7 +55,6 @@ exports.addLeaveData = async (req, res) => {
             applied_on: req.body.user.dateTime,
             created_at: req.body.user.dateTime
         }
-        console.log('insertLeaveData',insertLeaveData)
         let createLeaveDetails = await generic.insertData('kps_leave_application', insertLeaveData)
         if (createLeaveDetails.id) {
             db.connection.commit()
@@ -74,7 +72,6 @@ exports.addLeaveData = async (req, res) => {
         }
 
     } catch (error) {
-        console.log('error',error)
         db.connection.rollback()
         return generic.error(req, res, {
             status: 500,
