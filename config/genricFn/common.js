@@ -1034,6 +1034,8 @@ Generic.insertData = async (tableName, data) => {
       let values = Object.values(data);
       let query = `INSERT INTO ${tableName} (${columns}) VALUES (${placeholders})`;
       console.log('query',query)
+      console.log('values',values)
+
       db.connection.query(query, values, (err, res) => {
         if (err) {
           reject({ status: false, message: 'Failed to insert data' })
