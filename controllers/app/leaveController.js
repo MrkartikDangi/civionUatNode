@@ -40,6 +40,7 @@ exports.addLeaveData = async (req, res) => {
             }
         }
         const checkExistingLeaves = await leaveModel.getLeavesList(existingUserLeaves);
+        console.log('checkExistingLeaves',checkExistingLeaves)
         if (checkExistingLeaves.length) {
             db.connection.rollback()
             return generic.error(req, res, {
@@ -55,6 +56,7 @@ exports.addLeaveData = async (req, res) => {
             applied_on: req.body.user.dateTime,
             created_at: req.body.user.dateTime
         }
+        console.log('insertLeaveData',insertLeaveData)
         let createLeaveDetails = await generic.insertData('kps_leave_application', insertLeaveData)
         if (createLeaveDetails.id) {
             db.connection.commit()
