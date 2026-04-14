@@ -36,7 +36,8 @@ Leaves.getLeavesList = (postData) => {
         whereCondition += ` AND kla.status = '${postData.filter.status}'`
     }
     return new Promise((resolve, reject) => {
-        let query = `SELECT kla.id,kla.user_id ,ku.username AS applied_by,kla.from_date,kla.to_date,kla.reason,klt.leave_name AS leave_type,kla.status,kla.applied_on,ku1.username AS approved_by ,ku2.username AS rejected_by,kla.rejected_on, IFNULL(DATE_FORMAT(kla.created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at,IFNULL(DATE_FORMAT(kla.updated_at, '%Y-%m-%d %H:%i:%s'), '') AS updated_at,IFNULL(DATE_FORMAT(kla.approved_on, '%Y-%m-%d %H:%i:%s'), '') AS approved_on,
+        let query = `SELECT kla.id,kla.user_id ,ku.username AS applied_by,kla.from_date,kla.to_date,kla.reason,klt.leave_name AS leave_type,kla.status,ku1.username AS approved_by ,ku2.username AS rejected_by,IFNULL(DATE_FORMAT(kla.rejected_on, '%Y-%m-%d %H:%i:%s'), '') AS rejected_on,IFNULL(DATE_FORMAT(kla.created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at,IFNULL(DATE_FORMAT(kla.updated_at, '%Y-%m-%d %H:%i:%s'), '') AS updated_at,IFNULL(DATE_FORMAT(kla.approved_on, '%Y-%m-%d %H:%i:%s'), '') AS approved_on,
+        IFNULL(DATE_FORMAT(kla.applied_on, '%Y-%m-%d %H:%i:%s'), '') AS applied_on,
         CASE 
         WHEN kla.status = 'approved' THEN 'Approved'
         WHEN kla.status = 'rejected' THEN 'Rejected'
