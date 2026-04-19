@@ -358,7 +358,7 @@ router.post(
       check("tasks", "tasks is required").notEmpty(),
       check("toolBoxMeetingChecked", "toolBoxMeetingChecked is required").notEmpty(),
       check("employerSignature", "employerSignature is required").notEmpty(),
-      check("approverSignature", "approverSignature is required").notEmpty(),
+      check("approverSignature", "approverSignature is required"),
       check("schedule_id", "schedule_id is required").notEmpty(),
       check("completedStatus", "completedStatus is required").notEmpty(),
 
