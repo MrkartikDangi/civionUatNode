@@ -14,7 +14,7 @@ jobHazard.getJobHazardData = (postData) => {
     whereCondition += ` AND DATE(j.selected_date) = '${postData.filter.selectedDate}'`
   }
   if (postData.filter && postData.filter.from_date && postData.filter.to_date) {
-    whereCondition += ` AND j.created_at BETWEEN '${postData.filter.from_date}' AND '${postData.filter.to_date}'`
+    whereCondition += ` AND j.selected_date BETWEEN '${postData.filter.from_date}' AND '${postData.filter.to_date}'`
   }
   return new Promise((resolve, reject) => {
     let query = `SELECT j.*, COALESCE(JSON_ARRAYAGG(JSON_OBJECT('activityName', a.activityName,'otherTextValue',a.otherTextValue,'activities', (SELECT JSON_ARRAYAGG(TRIM(value)) FROM JSON_TABLE(CONCAT('["', REPLACE(a.activity_types, ',', '","'), '"]'), '$[*]' COLUMNS (value VARCHAR(255) PATH '$')) AS jt))), JSON_ARRAY()) AS selectedActivities, COALESCE((SELECT JSON_ARRAYAGG(JSON_OBJECT('task', t.task, 'severity', t.severity, 'hazard', t.hazard, 'controlPlan', t.controlPlan)) FROM kps_jobHazardTasks t WHERE t.job_hazard_id = j.id), JSON_ARRAY()) AS tasks,ks.project_name AS schedule_name FROM kps_jobhazard j LEFT JOIN kps_jobHazardActvity a ON a.job_hazard_id = j.id LEFT JOIN kps_schedules ks ON ks.id = j.schedule_id WHERE 1 = 1 ${whereCondition} GROUP BY j.id ORDER BY j.id desc;`
