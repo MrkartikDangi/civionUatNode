@@ -35,30 +35,29 @@
                       {{startDate}} – {{endDate}}</p>
                     <!-- Mileage condition -->
                     {{#if isMileage}}
-                    <table width="100%" style="margin-top: 10px; border-collapse: collapse; table-layout: fixed;">
-                      <tr>
-                        <th align="left" style="font-size: 13px; padding: 6px; color: #555; width: 50%;">From</th>
-                        <th align="left" style="font-size: 13px; padding: 6px; color: #555; width: 50%;">To</th>
-                      </tr>
+                    <div style="margin-top: 10px;">
 
                       {{#each routes}}
-                      <tr>
-                        <td style="padding: 6px; font-size: 14px; color: #333; 
-                 word-break: break-word; 
-                 overflow-wrap: break-word; 
-                 white-space: normal;">
-                          {{this.from}}
-                        </td>
-                        <td style="padding: 6px; font-size: 14px; color: #333; 
-                 word-break: break-word; 
-                 overflow-wrap: break-word; 
-                 white-space: normal;">
-                          {{this.to}}
-                        </td>
-                      </tr>
+                      <div style="margin-bottom: 12px; padding: 8px; background-color: #f9f9f9; border-radius: 6px;">
+
+                        <p style="margin: 0; font-size: 14px; color: #333; 
+                  word-break: break-word; 
+                  overflow-wrap: break-word; 
+                  white-space: normal;">
+                          <strong>From :</strong> {{this.from}}
+                        </p>
+
+                        <p style="margin: 4px 0 0 0; font-size: 14px; color: #333; 
+                  word-break: break-word; 
+                  overflow-wrap: break-word; 
+                  white-space: normal;">
+                          <strong>To :</strong> {{this.to}}
+                        </p>
+
+                      </div>
                       {{/each}}
 
-                    </table>
+                    </div>
                     {{/if}}
                     <p style="margin: 5px 0 0 0; font-size: 14px; color: #333;"><strong>Status:</strong> Will be
                       processed in the next pay run</p>
