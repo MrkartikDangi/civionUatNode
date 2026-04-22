@@ -904,6 +904,7 @@ Generic.sendExpenseMileageMail = async (postData) => {
             to: x.endLocation
           })
         }
+        console.log('mileage_location',mileage_location)
         emailData.routes = mileage_location
         emailData.isMileage = type === "mileage";
         emailData.employeeName = getMileageDetails[0]?.username || ''
@@ -914,6 +915,7 @@ Generic.sendExpenseMileageMail = async (postData) => {
       }
 
     }
+    console.log('emailData',emailData)
     const emailHTML = emailTemplate(emailData);
     let getMailInfo = await Generic.getEmailInfo({ module_type: 'expense_approval' })
 
