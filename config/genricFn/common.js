@@ -895,8 +895,16 @@ Generic.sendExpenseMileageMail = async (postData) => {
       }
     }
     if (postData.type == 'mileage' && postData.mileage_id !== "") {
+      let mileage_location = []
       getMileageDetails = await mileage.getUserMileage({ filter: { mileage_ids: postData.mileage_id, status: 'Approved' } })
       if (getMileageDetails.length) {
+        for (let x of getMileageDetails) {
+          mileage_location.push({
+            from: x.startLocation,
+            to: x.endLocation
+          })
+        }
+        emailData.routes = mileage_location
         emailData.employeeName = getMileageDetails[0]?.username || ''
         emailData.totalApprovedAmount = getMileageDetails.reduce((sum, trip) => sum + trip.amount, 0).toFixed(2) || 0
         emailData.startDate = getExpenseDetails.length ? moment.utc(getExpenseDetails[0]?.startDate).format("DD-MMM-YYYY") : ''
