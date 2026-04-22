@@ -906,7 +906,7 @@ Generic.sendExpenseMileageMail = async (postData) => {
         }
         console.log('mileage_location',mileage_location)
         emailData.routes = mileage_location
-        emailData.isMileage = type === "mileage";
+        emailData.isMileage = type === "Mileage";
         emailData.employeeName = getMileageDetails[0]?.username || ''
         emailData.totalApprovedAmount = getMileageDetails.reduce((sum, trip) => sum + trip.amount, 0).toFixed(2) || 0
         emailData.startDate = getExpenseDetails.length ? moment.utc(getExpenseDetails[0]?.startDate).format("DD-MMM-YYYY") : ''
