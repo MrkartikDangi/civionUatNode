@@ -67,8 +67,7 @@ weeklyEntry.getWeeklyEntry = (postData) => {
         if (res.length) {
           for (let row of res) {
             row.siteInspector = row.siteInspector !== null ? row.siteInspector.split(',') : []
-            console.log('row',row.weeklyAllList)
-            row.weeklyAllList = row.weeklyAllList?.data?.length ? JSON.parse(Buffer.from(row.weeklyAllList.data).toString()): [];
+            row.weeklyAllList = row.weeklyAllList?.data?.length ? JSON.parse(Buffer.from(row.weeklyAllList).toString()): [];
           }
         }
         resolve(res)
