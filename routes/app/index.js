@@ -646,7 +646,7 @@ router.post(
 leaveController.updateLeaveStatus,
 );
 router.post(
-  "/leave/recentPhotoFiles",
+  "/photofiles/recentPhotoFiles",
   authenticateJWT,
 photoFileController.recentPhotoFiles,
 );
