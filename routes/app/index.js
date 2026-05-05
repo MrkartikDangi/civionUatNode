@@ -645,5 +645,10 @@ router.post(
   
 leaveController.updateLeaveStatus,
 );
+router.post(
+  "/leave/recentPhotoFiles",
+  authenticateJWT,
+photoFileController.recentPhotoFiles,
+);
 
 module.exports = router;

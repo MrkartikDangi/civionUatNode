@@ -81,6 +81,20 @@ exports.getPhotoFiles = async (req, res) => {
     });
   }
 };
+exports.recentPhotoFiles = async (req, res) => {
+  try {
+    const recentPhotoFilesData = await PhotoFiles.getPhotoFilesData({ filter: { order_by: true } });
+    return generic.success(req, res, {
+      message: "photofiles data retrieved successfully.",
+      data: recentPhotoFilesData,
+    });
+  } catch (error) {
+    return generic.error(req, res, {
+      status: 500,
+      message: "Something went wrong !"
+    });
+  }
+};
 exports.getPhotoFilesByUserId = async (req, res) => {
   try {
     const photos = await PhotoFiles.getPhotoFilesData({ filter: { userId: req.body.user.userId } });
