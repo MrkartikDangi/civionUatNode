@@ -1131,10 +1131,6 @@ Generic.selectData = async (tableName, condition = {}, columns = '*') => {
       }
 
       let query = `SELECT ${cols} FROM ${tableName} ${whereClause}`;
-
-      console.log('query:', query);
-      console.log('values:', values);
-
       db.connection.query(query, values, (err, res) => {
         if (err) {
           return reject(err);
