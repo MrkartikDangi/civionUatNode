@@ -91,6 +91,7 @@ expense.getExpenseData = (postData) => {
                             END AS mileage
     FROM kps_expense LEFT JOIN kps_users ON kps_users.id = kps_expense.userId LEFT JOIN kps_schedules ON kps_schedules.id = kps_expense.schedule_id LEFT JOIN kps_expense_type ket ON ket.expense_id = kps_expense.id LEFT JOIN kps_mileage km ON km.id = kps_expense.mileageIds WHERE 1 = 1 ${whereCondition} GROUP BY kps_expense.id ORDER BY kps_expense.id DESC;`
     let queryValues = []
+    console.log('query',query)
     db.connection.query(query, queryValues, (err, res) => {
       if (err) {
         reject(err)
