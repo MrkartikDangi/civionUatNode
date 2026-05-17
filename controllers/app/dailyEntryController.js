@@ -158,7 +158,9 @@ exports.createDailyEntry = async (req, res) => {
             row.dailyEntryId = dailyEntryId
             let addLabourData = await dailyEntry.addLaboursData(row)
             if (row.roles.length && addLabourData.insertId) {
-              await dailyEntry.deleteLabourRoleData(ids)
+              if (ids.length) {
+                await dailyEntry.deleteLabourRoleData(ids)
+              }
               for (let x of row.roles) {
                 x.userId = req.body.user.userId
                 x.dateTime = req.body.user.dateTime
@@ -191,7 +193,7 @@ exports.createDailyEntry = async (req, res) => {
     }
 
   } catch (error) {
-    console.log('error',error)
+    console.log('error', error)
     db.connection.rollback()
     return generic.error(req, res, {
       status: 500,
