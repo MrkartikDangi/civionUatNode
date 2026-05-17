@@ -39,37 +39,75 @@ exports.createDailyDiary = async (req, res) => {
     if (!getScheduleData.length) {
       return generic.validationError(req, res, { message: "schedule does'nt exists" });
     }
-    const existingDailyEntry = await dailyEntry.getDailyEntry({ filter: { userId: req.body.user.userId, schedule_id: req.body.schedule_id, selectedDate: req.body.selectedDate } })
-    if (existingDailyEntry.length) {
-      db.connection.rollback()
-      return generic.error(req, res, {
-        message: `You have already submitted a daily entry for this project on this date ${moment(req.body.selectedDate).format("DD-MMM-YYYY")}.`,
-      });
-    }
-    let existingDailyDiary = await dailyDiary.getDailyDiary({ filter: { userId: req.body.user.userId, schedule_id: req.body.schedule_id, selectedDate: req.body.selectedDate } });
-    if (existingDailyDiary.length) {
-      db.connection.rollback()
-      return res.status(400).json({
-        message: `You have already submitted a daily diary for this project on this date ${moment(req.body.selectedDate).format("DD-MMM-YYYY")}.`,
+    if (!req.body.id) {
+      const existingDailyEntry = await dailyEntry.getDailyEntry({ filter: { userId: req.body.user.userId, schedule_id: req.body.schedule_id, selectedDate: req.body.selectedDate } })
+      if (existingDailyEntry.length) {
+        db.connection.rollback()
+        return generic.error(req, res, {
+          message: `You have already submitted a daily entry for this project on this date ${moment(req.body.selectedDate).format("DD-MMM-YYYY")}.`,
+        });
+      }
+      let existingDailyDiary = await dailyDiary.getDailyDiary({ filter: { userId: req.body.user.userId, schedule_id: req.body.schedule_id, selectedDate: req.body.selectedDate } });
+      if (existingDailyDiary.length) {
+        db.connection.rollback()
+        return res.status(400).json({
+          message: `You have already submitted a daily diary for this project on this date ${moment(req.body.selectedDate).format("DD-MMM-YYYY")}.`,
 
-      });
+        });
 
-    }
-    const newDailyDiary = await dailyDiary.createDailyDiary(req.body);
-    if (newDailyDiary.insertId) {
-      db.connection.commit()
-      return generic.success(req, res, {
-        message: "Daily Diary created successfully.",
-        data: {
-          id: newDailyDiary.insertId
-        }
-      });
+      }
+      const newDailyDiary = await dailyDiary.createDailyDiary(req.body);
+      if (newDailyDiary.insertId) {
+        db.connection.commit()
+        return generic.success(req, res, {
+          message: "Daily Diary created successfully.",
+          data: {
+            id: newDailyDiary.insertId
+          }
+        });
 
+      } else {
+        db.connection.rollback()
+        return generic.error(req, res, {
+          message: "Failed to create daily diary",
+        });
+      }
     } else {
-      db.connection.rollback()
-      return generic.error(req, res, {
-        message: "Failed to create daily diary",
-      });
+      let updatedData = {
+        schedule_id: req.body.schedule_id,
+        selectedDate: req.body.selectedDate,
+        ownerProjectManager: req.body.ownerProjectManager,
+        contractNumber: req.body.contractNumber,
+        contractor: req.body.contractor,
+        ownerContact: req.body.ownerContact,
+        description: req.body.description,
+        IsChargable: req.body.IsChargable,
+        reportNumber: req.body.reportNumber,
+        siteInspector: req.body.siteInspector,
+        timeIn: req.body.timeIn,
+        timeOut: req.body.timeOut,
+        totalHours: req.body.totalHours,
+        logo: req.body.logo ? req.body.logo.join(',') : null,
+        signature: req.body.signature,
+        pdfName: req.body.pdfName,
+        form_completed: req.body?.form_completed ?? 0,
+        updated_by: req.body.user.userId,
+        updated_at: req.body.user.dateTime
+      }
+      let updatedResult = await generic.updateData('kps_daily_diary', updatedData, { id: req.body.id })
+      if (updatedResult) {
+        db.connection.commit()
+        return generic.success(req, res, {
+          message: "Daily Diary updated successfully.",
+        });
+
+      } else {
+        db.connection.rollback()
+        return generic.error(req, res, {
+          message: "Failed to update daily diary",
+        });
+      }
+
     }
   } catch (error) {
     db.connection.rollback()
