@@ -1151,6 +1151,41 @@ Generic.selectData = async (tableName, condition = {}, columns = '*') => {
     }
   });
 };
+// Generic.deleteData = async (tableName, condition) => {
+//   return new Promise((resolve, reject) => {
+//     try {
+//       let conditionKeys = Object.keys(condition)
+//         .map(key => `${key} = ?`)
+//         .join(' AND ');
+
+//       let values = Object.values(condition);
+
+//       let query = `DELETE FROM ${tableName} WHERE ${conditionKeys}`;
+
+//       db.connection.query(query, values, (err, res) => {
+//         if (err) {
+//           reject({
+//             status: false,
+//             message: 'Failed to delete data'
+//           });
+//         } else {
+//           resolve({
+//             status: true,
+//             message: 'Data successfully deleted',
+//             affectedRows: res.affectedRows
+//           });
+//         }
+//       });
+
+//     } catch (error) {
+//       reject({
+//         status: false,
+//         message: 'Error in query',
+//         error
+//       });
+//     }
+//   });
+// };
 
 
 module.exports = Generic;

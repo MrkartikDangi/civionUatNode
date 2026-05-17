@@ -225,6 +225,7 @@ dailyEntry.createDailyEntry = (postData) => {
       signature: postData.signature,
       pdfName: postData.pdfName,
       declerationFrom: postData.declerationFrom ? JSON.stringify(postData.declerationFrom) : null,
+      form_completed: postData?.form_completed ?? 0,
       userId: postData.user.userId,
       created_by: postData.user.userId,
       created_at: postData.user.dateTime
@@ -342,6 +343,20 @@ dailyEntry.addPhotoFilesData = (postData) => {
     }
     let query = `INSERT INTO ?? SET ?`
     let values = ['kps_daily_entry_photofiles', insertedData]
+    db.connection.query(query, values, (err, res) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res)
+      }
+    })
+
+  })
+}
+dailyEntry.deleteLabourRoleData = (postData) => {
+  return new Promise((resolve, reject) => {
+    let query = `DELETE FROM kps_daily_entry_labour_roles WHERE labour_id in (${postData.join(',')})`
+    let values = []
     db.connection.query(query, values, (err, res) => {
       if (err) {
         reject(err)

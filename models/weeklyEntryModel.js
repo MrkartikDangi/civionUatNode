@@ -67,7 +67,7 @@ weeklyEntry.getWeeklyEntry = (postData) => {
         if (res.length) {
           for (let row of res) {
             row.siteInspector = row.siteInspector !== null ? row.siteInspector.split(',') : []
-            row.weeklyAllList = row.weeklyAllList ? JSON.parse(Buffer.from(row.weeklyAllList).toString()): [];
+            row.weeklyAllList = row.weeklyAllList ? JSON.parse(Buffer.from(row.weeklyAllList).toString()) : [];
           }
         }
         resolve(res)
@@ -102,6 +102,7 @@ weeklyEntry.createWeeklyEntry = (postData) => {
       signature: postData.signature,
       pdfName: postData.pdfName,
       weeklyAllList: Object.keys(postData.weeklyAllList).length ? JSON.stringify(postData.weeklyAllList) : '',
+      form_completed:postData?.form_completed ?? 0,
       created_at: postData.user.dateTime,
       created_by: postData.user.userId
     }

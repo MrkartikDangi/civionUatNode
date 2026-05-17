@@ -249,11 +249,12 @@ router.post(
   "/daily/createDailyEntry",
   oneOf([
     [
+      check("id", "id is required"),
       check("schedule_id", "schedule_id is required").notEmpty(),
-      check("selectedDate", "selectedDate is required").notEmpty(),
-      check("location", "location is required").notEmpty(),
-      check("reportNumber", "reportNumber is required").notEmpty(),
-      check("photoFiles", "photoFiles is required").notEmpty(),
+      // check("selectedDate", "selectedDate is required").notEmpty(),
+      // check("location", "location is required").notEmpty(),
+      // check("reportNumber", "reportNumber is required").notEmpty(),
+      // check("photoFiles", "photoFiles is required").notEmpty(),
 
     ],
   ]),
@@ -265,10 +266,11 @@ router.post(
   "/weekly/createWeeklyEntry",
   oneOf([
     [
+      check("id", "id is required"),
       check("schedule_id", "schedule_id is required").notEmpty(),
-      check("startDate", "startDate is required").notEmpty(),
-      check("endDate", "endDate is required").notEmpty(),
-      check("photoFiles", "photoFiles is required").notEmpty(),
+      // check("startDate", "startDate is required").notEmpty(),
+      // check("endDate", "endDate is required").notEmpty(),
+      // check("photoFiles", "photoFiles is required").notEmpty(),
 
     ],
   ]),
