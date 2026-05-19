@@ -90,9 +90,9 @@ exports.createWeeklyEntry = async (req, res) => {
     } else {
       let updatedData = {
         schedule_id: req.body.schedule_id,
-        weekStartDate: req.body.startDate,
-        weekEndDate: req.body.endDate,
-        reportDate: req.body.reportDate,
+        weekStartDate: req.body.startDate ? req.body.startDate : "",
+        weekEndDate: req.body.endDate ? req.body.endDate : "",
+        reportDate: req.body.reportDate ? req.body.reportDate: "",
         contractNumber: req.body.contractNumber || null,
         projectManager: req.body.projectManager || null,
         consultantProjectManager: req.body.consultantProjectManager || null,
@@ -107,9 +107,9 @@ exports.createWeeklyEntry = async (req, res) => {
         supportCA: req.body.supportCA || null,
         component: req.body.component || null,
         logo: req.body.logo ? req.body.logo.join(',') : null,
-        signature: req.body.signature,
-        pdfName: req.body.pdfName,
-        weeklyAllList: Object.keys(req.body.weeklyAllList).length ? JSON.stringify(req.body.weeklyAllList) : '',
+        signature: req.body.signature || null,
+        pdfName: req.body.pdfName || null,
+        weeklyAllList: req.body.weeklyAllList && Object.keys(req.body.weeklyAllList).length ? JSON.stringify(req.body.weeklyAllList) : '',
         form_completed: req.body?.form_completed ?? 0,
         updated_at: req.body.user.dateTime,
         updated_by: req.body.user.userId

@@ -79,13 +79,12 @@ weeklyEntry.getWeeklyEntry = (postData) => {
 }
 weeklyEntry.createWeeklyEntry = (postData) => {
   return new Promise((resolve, reject) => {
-       console.log('insertedData',postData)
     let insertedData = {
       userId: postData.user.userId,
       schedule_id: postData.schedule_id,
-      weekStartDate: postData.startDate,
-      weekEndDate: postData.endDate,
-      reportDate: postData.reportDate,
+      weekStartDate: postData.startDate ? postData.startDate : "",
+      weekEndDate: postData.endDate ? postData.endDate : "",
+      reportDate: postData.reportDate ? postData.reportDate : "",
       contractNumber: postData.contractNumber || null,
       projectManager: postData.projectManager || null,
       consultantProjectManager: postData.consultantProjectManager || null,
@@ -100,15 +99,13 @@ weeklyEntry.createWeeklyEntry = (postData) => {
       supportCA: postData.supportCA || null,
       component: postData.component || null,
       logo: postData.logo ? postData.logo.join(',') : null,
-      signature: postData.signature,
-      pdfName: postData.pdfName,
+      signature: postData.signature ? postData.signature : "",
+      pdfName: postData.pdfName ? postData.pdfName : "",
       weeklyAllList: postData.weeklyAllList && Object.keys(postData.weeklyAllList).length ? JSON.stringify(postData.weeklyAllList) : '',
       form_completed:postData?.form_completed ?? 0,
       created_at: postData.user.dateTime,
       created_by: postData.user.userId
     }
-    console.log('insertedData',insertedData)
-
     let query = `INSERT INTO ?? SET ?`
     let queryValues = ["kps_weekly_entry", insertedData]
     db.connection.query(query, queryValues, (err, res) => {
