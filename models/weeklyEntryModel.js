@@ -58,7 +58,7 @@ weeklyEntry.getWeeklyEntry = (postData) => {
                                                   ),
                                                   JSON_ARRAY()
                                           ) AS photoFiles              
-    FROM kps_weekly_entry kwe LEFT JOIN kps_users ON kps_users.id = kwe.userId WHERE 1 = 1 ${whereCondition} ${orderCondition} order by id desc`
+    FROM kps_weekly_entry kwe LEFT JOIN kps_users ON kps_users.id = kwe.userId WHERE 1 = 1 ${whereCondition}  order by id desc`
     let queryValues = []
     db.connection.query(query, queryValues, (err, res) => {
       if (err) {
