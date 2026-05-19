@@ -82,9 +82,9 @@ weeklyEntry.createWeeklyEntry = (postData) => {
     let insertedData = {
       userId: postData.user.userId,
       schedule_id: postData.schedule_id,
-      weekStartDate: postData.startDate ? postData.startDate : "",
-      weekEndDate: postData.endDate ? postData.endDate : "",
-      reportDate: postData.reportDate ? postData.reportDate : "",
+      weekStartDate: postData.startDate ? postData.startDate : null,
+      weekEndDate: postData.endDate ? postData.endDate : null,
+      reportDate: postData.reportDate ? postData.reportDate : null,
       contractNumber: postData.contractNumber || null,
       projectManager: postData.projectManager || null,
       consultantProjectManager: postData.consultantProjectManager || null,

@@ -90,9 +90,9 @@ exports.createWeeklyEntry = async (req, res) => {
     } else {
       let updatedData = {
         schedule_id: req.body.schedule_id,
-        weekStartDate: req.body.startDate ? req.body.startDate : "",
-        weekEndDate: req.body.endDate ? req.body.endDate : "",
-        reportDate: req.body.reportDate ? req.body.reportDate: "",
+        weekStartDate: req.body.startDate ? req.body.startDate : null,
+        weekEndDate: req.body.endDate ? req.body.endDate : null,
+        reportDate: req.body.reportDate ? req.body.reportDate: null,
         contractNumber: req.body.contractNumber || null,
         projectManager: req.body.projectManager || null,
         consultantProjectManager: req.body.consultantProjectManager || null,
