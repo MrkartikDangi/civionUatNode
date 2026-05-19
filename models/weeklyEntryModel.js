@@ -79,6 +79,7 @@ weeklyEntry.getWeeklyEntry = (postData) => {
 }
 weeklyEntry.createWeeklyEntry = (postData) => {
   return new Promise((resolve, reject) => {
+       console.log('insertedData',postData)
     let insertedData = {
       userId: postData.user.userId,
       schedule_id: postData.schedule_id,
