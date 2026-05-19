@@ -106,6 +106,8 @@ weeklyEntry.createWeeklyEntry = (postData) => {
       created_at: postData.user.dateTime,
       created_by: postData.user.userId
     }
+    console.log('insertedData',insertedData)
+
     let query = `INSERT INTO ?? SET ?`
     let queryValues = ["kps_weekly_entry", insertedData]
     db.connection.query(query, queryValues, (err, res) => {
