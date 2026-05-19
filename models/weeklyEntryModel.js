@@ -58,7 +58,7 @@ weeklyEntry.getWeeklyEntry = (postData) => {
                                                   ),
                                                   JSON_ARRAY()
                                           ) AS photoFiles              
-    FROM kps_weekly_entry kwe LEFT JOIN kps_users ON kps_users.id = kwe.userId WHERE 1 = 1 ${whereCondition}  order by id desc`
+    FROM kps_weekly_entry kwe LEFT JOIN kps_users ON kps_users.id = kwe.userId WHERE 1 = 1 ${whereCondition} ${orderCondition}`
     let queryValues = []
     db.connection.query(query, queryValues, (err, res) => {
       if (err) {
@@ -66,9 +66,9 @@ weeklyEntry.getWeeklyEntry = (postData) => {
       } else {
         if (res.length) {
           for (let row of res) {
-            console.log(' row.weeklyAllLis', row.weeklyAllList)
+            let data = row?.weeklyAllList;
             row.siteInspector = row.siteInspector !== null ? row.siteInspector.split(',') : []
-            row.weeklyAllList = row?.weeklyAllList ? JSON.parse(Buffer.from(row.weeklyAllList).toString()) : [];
+            row.weeklyAllList =  data && Buffer.isBuffer(data) && data.length > 0 ? JSON.parse(Buffer.from(row.weeklyAllList).toString()) : [];
           }
         }
         resolve(res)
