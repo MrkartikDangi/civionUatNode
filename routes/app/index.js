@@ -88,6 +88,9 @@ router.post(
   "/auth/getUsersList", authenticateJWT, userController.getUsersList,
 );
 router.post(
+  "/auth/getUsersAnniversaryDetails", authenticateJWT, userController.getUsersAnniversaryDetails,
+);
+router.post(
   "/auth/addUser",
   oneOf([
     [
@@ -651,5 +654,6 @@ router.post(
   authenticateJWT,
 photoFileController.recentPhotoFiles,
 );
+
 
 module.exports = router;

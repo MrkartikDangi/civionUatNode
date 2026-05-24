@@ -569,3 +569,17 @@ exports.logout = async (req, res) => {
     });
   }
 };
+exports.getUsersAnniversaryDetails = async (req, res) => {
+  try {
+    const getUsersAnniversaryDetails = await User.getUsersAnniversaryDetails(req.body);
+    return generic.success(req, res, {
+      message: "Users Anniversary list.",
+      data: getUsersAnniversaryDetails,
+    });
+  } catch (error) {
+    return generic.error(req, res, {
+      status: 500,
+      message: "something went wrong!",
+    });
+  }
+};

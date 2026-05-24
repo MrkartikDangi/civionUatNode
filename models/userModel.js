@@ -33,6 +33,20 @@ User.checkExistingUser = (postData) => {
     })
   })
 }
+
+User.getUsersAnniversaryDetails = (postData) => {
+  return new Promise((resolve, reject) => {
+    let query = `SELECT kps_users.*,IFNULL(DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at,IFNULL(DATE_FORMAT(updated_at, '%Y-%m-%d %H:%i:%s'), '') AS updated_at,IF(profile_image IS NOT NULL AND profile_image <> '', CONCAT('${process.env.Base_Url}', folder_name, '/', profile_image), '') AS profile_image_url FROM kps_users WHERE  DATE_FORMAT(date_of_joining, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d');`
+    let values = []
+    db.connection.query(query, values, (err, res) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res)
+      }
+    })
+  })
+}
 User.addUserDetails = (postData) => {
   return new Promise((resolve, reject) => {
     let insertedValues = {
