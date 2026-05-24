@@ -53,6 +53,7 @@ User.addUserDetails = (postData) => {
       email: postData.email,
       mileage_rate: postData.mileageRate,
       allowanceDistance: postData.allowanceDistance || 0,
+      date_of_joining: postData.date_of_joining || null,
       is_boss: postData.isBoss || false,
       created_at: postData.user.dateTime,
       created_by: postData.user.userId
