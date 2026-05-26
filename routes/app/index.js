@@ -596,8 +596,10 @@ router.post(
       check("last_name", "Last Name is required"),
       check("mileage_rate", "Mileage Rate is required").notEmpty(),
       check("allowanceDistance", "Allowance Distance is required").notEmpty(),
-      check("profile_image", "Profile Image is required")
-
+      check("profile_image", "Profile Image is required"),
+      check("vaccation_leave", "Vaccation Leave is required"),
+      check("date_of_joining", "Date of joining is required"),
+      check("paid_leave", "Paid Leave is required")
     ],
   ]),
   authenticateJWT,
@@ -617,6 +619,7 @@ router.post(
       check("from_date", "From Date is required").notEmpty(),
       check("to_date", "To Date is required").notEmpty(),
       check("reason", "reason is required").notEmpty(),
+      check("leave_manager_id", "Leave Manager Id is required").notEmpty(),
     ],
   ]),
   authenticateJWT,
@@ -632,6 +635,7 @@ router.post(
       check("from_date", "From Date is required").notEmpty(),
       check("to_date", "To Date is required").notEmpty(),
       check("reason", "reason is required").notEmpty(),
+      check("leave_manager_id", "Leave Manager Id is required").notEmpty(),
     ],
   ]),
   authenticateJWT,
@@ -645,6 +649,9 @@ router.post(
       check("id", "Id is required").notEmpty(),
       check("user_id", "User Id is required").notEmpty(),
       check("status", "Status is required").notEmpty(),
+      check("leave_manager_id", "Leave Manager Id is required").notEmpty(),
+      check("leave_approval_level", "Approval Level is required").notEmpty(),
+
     ],
   ]),
   authenticateJWT,

@@ -29,6 +29,7 @@ exports.getLeaveList = async (req, res) => {
             data: getLeavesList,
         });
     } catch (error) {
+        console.log('error',error)
         return generic.error(req, res, {
             status: 500,
             message: "Something went wrong !"
@@ -66,6 +67,8 @@ exports.addLeaveData = async (req, res) => {
             from_date: req.body.from_date,
             to_date: req.body.to_date,
             leave_type_id: req.body.leave_type_id,
+            leave_manager_id: req.body.leave_manager_id,
+            no_of_days: req.body.no_of_days,
             reason: req.body.reason,
             applied_on: req.body.user.dateTime,
             created_at: req.body.user.dateTime
@@ -122,6 +125,7 @@ exports.updateLeaveData = async (req, res) => {
             from_date: req.body.from_date,
             to_date: req.body.to_date,
             leave_type_id: req.body.leave_type_id,
+            leave_manager_id: req.body.leave_manager_id,
             reason: req.body.reason,
             updated_at: req.body.user.dateTime
         }
@@ -168,11 +172,11 @@ exports.updateLeaveStatus = async (req, res) => {
         }
         const getLeaveStatus = await leaveModel.getLeavesList(checkLeaveStatus);
         if (getLeaveStatus.length) {
-            if (getLeaveStatus[0]?.status_text !== 'Pending') {
+            if (getLeaveStatus[0]?.status_text == 'Rejected' || getLeaveStatus[0]?.status_text == 'Cancelled') {
                 let message = `The leave request cannot be ${req.body.status} because it has already been ${getLeaveStatus[0]?.status}`
-                if (getLeaveStatus[0]?.status_text == 'Approved') {
-                    message += ` by ${getLeaveStatus[0]?.approved_by}`
-                }
+                // if (getLeaveStatus[0]?.status_text == 'Approved') {
+                //     message += ` by ${getLeaveStatus[0]?.approved_by}`
+                // }
                 if (getLeaveStatus[0]?.status_text == 'Rejected') {
                     message += ` by ${getLeaveStatus[0]?.rejected_by}`
                 }
@@ -186,15 +190,23 @@ exports.updateLeaveStatus = async (req, res) => {
             }
             let updateUserLeave = {
                 status: req.body.status,
-                updated_at: req.body.user.dateTime
+                updated_at: req.body.user.dateTime,
+                leave_approval_level : req.body.leave_approval_level,
+                leave_manager_id : req.body.leave_manager_id,
             }
             if (req.body.status == 'approved') {
-                updateUserLeave.approved_by = req.body.user.userId
+                if(req.body.leave_approval_level > 1){
+                    updateUserLeave.approved_by = `${getLeaveStatus[0]?.approved_by},${req.body.user.userId}`
+                }else{
+                    updateUserLeave.approved_by = req.body.user.userId
+                }
                 updateUserLeave.approved_on = req.body.user.dateTime
+
             }
             if (req.body.status == 'rejected') {
                 updateUserLeave.rejected_by = req.body.user.userId
                 updateUserLeave.rejected_on = req.body.user.dateTime
+
             }
             let whereClause = {
                 id: req.body.id,

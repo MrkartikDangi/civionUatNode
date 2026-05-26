@@ -35,16 +35,32 @@ Leaves.getLeavesList = (postData) => {
     if (postData.filter && postData.filter.status) {
         whereCondition += ` AND kla.status = '${postData.filter.status}'`
     }
+    if (postData.filter && postData.filter.approval_level) {
+        whereCondition += ` AND kla.leave_approval_level = '${postData.filter.approval_level}'`
+    }
+    if (postData.filter && postData.filter.leave_manager_id) {
+        whereCondition += ` AND kla.leave_manager_id = '${postData.filter.leave_manager_id}'`
+    }
     return new Promise((resolve, reject) => {
-        let query = `SELECT kla.id,kla.user_id ,ku.username AS applied_by,kla.from_date,kla.to_date,kla.reason,klt.leave_name AS leave_type,kla.status,ku1.username AS approved_by ,ku2.username AS rejected_by,IFNULL(DATE_FORMAT(kla.rejected_on, '%Y-%m-%d %H:%i:%s'), '') AS rejected_on,IFNULL(DATE_FORMAT(kla.created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at,IFNULL(DATE_FORMAT(kla.updated_at, '%Y-%m-%d %H:%i:%s'), '') AS updated_at,IFNULL(DATE_FORMAT(kla.approved_on, '%Y-%m-%d %H:%i:%s'), '') AS approved_on,
-        IFNULL(DATE_FORMAT(kla.applied_on, '%Y-%m-%d %H:%i:%s'), '') AS applied_on,
-        CASE 
-        WHEN kla.status = 'approved' THEN 'Approved'
-        WHEN kla.status = 'rejected' THEN 'Rejected'
-        WHEN kla.status = 'cancelled' THEN 'Cancelled'
-        ELSE 'Pending'
-        END AS status_text
-        FROM kps_leave_application kla LEFT JOIN kps_leave_type klt ON klt.id = kla.leave_type_id LEFT JOIN kps_users ku ON ku.id = kla.user_id LEFT JOIN kps_users ku1 ON ku1.id = kla.approved_by LEFT JOIN kps_users ku2 ON ku2.id = kla.rejected_by WHERE 1 = 1 ${whereCondition} `
+    let query = `SELECT kla.id,kla.user_id,kla.leave_approval_level,ku.username AS applied_by,kla.from_date,kla.to_date,kla.reason,klt.leave_name AS leave_type,kla.status,
+                                (
+                                    SELECT GROUP_CONCAT(username SEPARATOR ', ')
+                                    FROM kps_users
+                                    WHERE FIND_IN_SET(id, kla.approved_by)
+                                ) AS approved_by,
+    ku2.username AS rejected_by,
+    IFNULL(DATE_FORMAT(kla.rejected_on, '%Y-%m-%d %H:%i:%s'), '') AS rejected_on,
+    IFNULL(DATE_FORMAT(kla.created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at,
+    IFNULL(DATE_FORMAT(kla.updated_at, '%Y-%m-%d %H:%i:%s'), '') AS updated_at,
+    IFNULL(DATE_FORMAT(kla.approved_on, '%Y-%m-%d %H:%i:%s'), '') AS approved_on,
+    IFNULL(DATE_FORMAT(kla.applied_on, '%Y-%m-%d %H:%i:%s'), '') AS applied_on,
+                                CASE 
+                                    WHEN kla.status = 'approved' THEN 'Approved'
+                                    WHEN kla.status = 'rejected' THEN 'Rejected'
+                                    WHEN kla.status = 'cancelled' THEN 'Cancelled'
+                                    ELSE 'Pending'
+                                END AS status_text
+    FROM kps_leave_application kla LEFT JOIN kps_leave_type klt ON klt.id = kla.leave_type_id LEFT JOIN kps_users ku ON ku.id = kla.user_id LEFT JOIN kps_users ku2 ON ku2.id = kla.rejected_by WHERE 1 = 1 ${whereCondition};`
         let values = []
         db.connection.query(query, values, (err, res) => {
             if (err) {

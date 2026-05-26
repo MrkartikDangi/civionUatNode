@@ -21,6 +21,9 @@ User.checkExistingUser = (postData) => {
   if (postData.filter && postData.filter.jhaApproval) {
     whereCondition += ` AND jhaApproval = '${postData.filter.jhaApproval}'`
   }
+  if (postData.filter && postData.filter.approval_level) {
+    whereCondition += ` AND approval_level = '${postData.filter.approval_level}'`
+  }
   return new Promise((resolve, reject) => {
     let query = `SELECT kps_users.*,IFNULL(DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at,IFNULL(DATE_FORMAT(updated_at, '%Y-%m-%d %H:%i:%s'), '') AS updated_at,IF(profile_image IS NOT NULL AND profile_image <> '', CONCAT('${process.env.Base_Url}', folder_name, '/', profile_image), '') AS profile_image_url FROM kps_users WHERE 1 = 1 ${whereCondition}`
     let values = []
@@ -189,6 +192,9 @@ User.updateUserProfileDetails = (postData) => {
       mileage_rate: postData.mileage_rate,
       allowanceDistance: postData.allowanceDistance,
       folder_name: postData.profile_image ? path.dirname(postData.profile_image) : '',
+      date_of_joining: postData.date_of_joining,
+      vaccation_leave: postData.vaccation_leave,
+      paid_leave: postData.paid_leave,
       updated_by: postData.user.userId,
       updated_at: postData.user.dateTime,
     }
