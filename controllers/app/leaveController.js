@@ -9,10 +9,22 @@ const db = require("../../config/db")
 exports.getLeaveTypes = async (req, res) => {
     try {
         const getLeaveTypes = await leaveModel.getLeaveTypes(req.body);
-        return generic.success(req, res, {
-            message: "Leaves Types List",
-            data: getLeaveTypes,
-        });
+        if (getLeaveTypes.length) {
+            let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user.userId })
+            let data = data = getLeaveTypes.map(item => ({
+                leave_type: item.leave_type,
+                available_leaves: item.leave_type.toLower() == 'vaccation leave' ? getUserLeaveData[0]?.vaccation_leave : item.leave_type.toLower() == 'paid leave' ? getUserLeaveData[0]?.paid_leave : 0
+            }));
+            return generic.success(req, res, {
+                message: "Leaves Types List",
+                data: data,
+            });
+        } else {
+            return generic.error(req, res, {
+                message: "Leave type data is not available"
+            });
+        }
+
     } catch (error) {
         return generic.error(req, res, {
             status: 500,
@@ -114,6 +126,7 @@ exports.addLeaveData = async (req, res) => {
         }
 
     } catch (error) {
+        console.log('err0r',error)
         db.connection.rollback()
         return generic.error(req, res, {
             status: 500,
