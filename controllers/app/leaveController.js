@@ -11,9 +11,11 @@ exports.getLeaveTypes = async (req, res) => {
         const getLeaveTypes = await leaveModel.getLeaveTypes(req.body);
         if (getLeaveTypes.length) {
             let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user.userId })
-            let data = data = getLeaveTypes.map(item => ({
-                leave_type: item.leave_type,
-                available_leaves: item.leave_type.toLower() == 'vaccation leave' ? getUserLeaveData[0]?.vaccation_leave : item.leave_type.toLower() == 'paid leave' ? getUserLeaveData[0]?.paid_leave : 0
+            console.log('getUserLeaveData',getUserLeaveData)
+            let data  = getLeaveTypes.map(item => ({
+                id: item.id,
+                leave_type: item.leave_name,
+                available_leaves: item.leave_name.toLowerCase() == 'vaccation leave' ? getUserLeaveData[0]?.vaccation_leave : item.leave_name.toLowerCase() == 'paid leave' ? getUserLeaveData[0]?.paid_leave : 0
             }));
             return generic.success(req, res, {
                 message: "Leaves Types List",
@@ -26,6 +28,7 @@ exports.getLeaveTypes = async (req, res) => {
         }
 
     } catch (error) {
+        console.log('error',error)
         return generic.error(req, res, {
             status: 500,
             message: "Something went wrong !"
@@ -89,18 +92,18 @@ exports.addLeaveData = async (req, res) => {
         if (createLeaveDetails.id) {
             let getLeaveType = await generic.selectData('kps_leave_type', { id: req.body.leave_type_id }, ['leave_name'])
             let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user.userId })
-            if ((getLeaveType[0]?.leave_name.toLower() == 'vaccation leave' && getUserLeaveData[0]?.vaccation_leave < req.body.no_of_days) || (getLeaveType[0]?.leave_name.toLower() == 'paid leave' && getUserLeaveData[0]?.paid_leave < req.body.no_of_days)) {
+            if ((getLeaveType[0]?.leave_name.toLowerCase() == 'vaccation leave' && getUserLeaveData[0]?.vaccation_leave < req.body.no_of_days) || (getLeaveType[0]?.leave_name.toLowerCase() == 'paid leave' && getUserLeaveData[0]?.paid_leave < req.body.no_of_days)) {
                 db.connection.rollback()
                 return generic.error(req, res, {
                     message: "You have applied for more leave days than your current balance allows",
                 });
             }
             let updateUserLeaveDetails
-            if (getLeaveType[0]?.leave_name.toLower() == 'vaccation leave') {
+            if (getLeaveType[0]?.leave_name.toLowerCase() == 'vaccation leave') {
                 updateUserLeaveDetails = {
                     vaccation_leave: getUserLeaveData[0]?.vaccation_leave - req.body.no_of_days
                 }
-            } else if (getLeaveType[0]?.leave_name.toLower() == 'paid leave') {
+            } else if (getLeaveType[0]?.leave_name.toLowerCase() == 'paid leave') {
                 updateUserLeaveDetails = {
                     paid_leave: getUserLeaveData[0]?.paid_leave - req.body.no_of_days
                 }
