@@ -11,10 +11,11 @@ exports.getLeaveTypes = async (req, res) => {
         const getLeaveTypes = await leaveModel.getLeaveTypes(req.body);
         if (getLeaveTypes.length) {
             let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user.userId })
-            console.log('getUserLeaveData',getUserLeaveData)
             let data  = getLeaveTypes.map(item => ({
                 id: item.id,
-                leave_type: item.leave_name,
+                leave_name: item.leave_name,
+                leave_code:item.leave_code,
+                is_active: item.is_active,
                 available_leaves: item.leave_name.toLowerCase() == 'vaccation leave' ? getUserLeaveData[0]?.vaccation_leave : item.leave_name.toLowerCase() == 'paid leave' ? getUserLeaveData[0]?.paid_leave : 0
             }));
             return generic.success(req, res, {
