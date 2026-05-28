@@ -29,7 +29,7 @@ exports.getLeaveList = async (req, res) => {
             data: getLeavesList,
         });
     } catch (error) {
-        console.log('error',error)
+        console.log('error', error)
         return generic.error(req, res, {
             status: 500,
             message: "Something went wrong !"
@@ -75,6 +75,30 @@ exports.addLeaveData = async (req, res) => {
         }
         let createLeaveDetails = await generic.insertData('kps_leave_application', insertLeaveData)
         if (createLeaveDetails.id) {
+            let getLeaveType = await generic.selectData('kps_leave_type', { id: req.body.leave_type_id }, ['leave_name'])
+            let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user.userId })
+            if ((getLeaveType[0]?.leave_name.toLower() == 'vaccation leave' && getUserLeaveData[0]?.vaccation_leave < req.body.no_of_days) || (getLeaveType[0]?.leave_name.toLower() == 'paid leave' && getUserLeaveData[0]?.paid_leave < req.body.no_of_days)) {
+                db.connection.rollback()
+                return generic.error(req, res, {
+                    message: "You have applied for more leave days than your current balance allows",
+                });
+            }
+            let updateUserLeaveDetails
+            if (getLeaveType[0]?.leave_name.toLower() == 'vaccation leave') {
+                updateUserLeaveDetails = {
+                    vaccation_leave: getUserLeaveData[0]?.vaccation_leave - req.body.no_of_days
+                }
+            } else if (getLeaveType[0]?.leave_name.toLower() == 'paid leave') {
+                updateUserLeaveDetails = {
+                    paid_leave: getUserLeaveData[0]?.paid_leave - req.body.no_of_days
+                }
+            } else {
+                db.connection.rollback()
+                return generic.error(req, res, {
+                    message: "Invalid Leave Type",
+                });
+            }
+            await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user.userId })
             db.connection.commit()
             return generic.success(req, res, {
                 message: "Leave applied successfully",
@@ -191,13 +215,13 @@ exports.updateLeaveStatus = async (req, res) => {
             let updateUserLeave = {
                 status: req.body.status,
                 updated_at: req.body.user.dateTime,
-                leave_approval_level : req.body.leave_approval_level,
-                leave_manager_id : req.body.leave_manager_id,
+                leave_approval_level: req.body.leave_approval_level,
+                leave_manager_id: req.body.leave_manager_id,
             }
             if (req.body.status == 'approved') {
-                if(req.body.leave_approval_level > 1){
+                if (req.body.leave_approval_level > 1) {
                     updateUserLeave.approved_by = `${getLeaveStatus[0]?.approved_by},${req.body.user.userId}`
-                }else{
+                } else {
                     updateUserLeave.approved_by = req.body.user.userId
                 }
                 updateUserLeave.approved_on = req.body.user.dateTime
@@ -214,6 +238,27 @@ exports.updateLeaveStatus = async (req, res) => {
             }
             let updateLeaveDetails = await generic.updateData('kps_leave_application', updateUserLeave, whereClause)
             if (updateLeaveDetails.status) {
+                if (req.body.status == 'rejected') {
+                    let getLeaveType = await generic.selectData('kps_leave_type', { id: req.body.leave_type_id }, ['leave_name'])
+                    let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user_id })
+                    let updateUserLeaveDetails
+                    if (getLeaveType[0]?.leave_name.toLower() == 'vaccation leave') {
+                        updateUserLeaveDetails = {
+                            vaccation_leave: getUserLeaveData[0]?.vaccation_leave + req.body.no_of_days
+                        }
+                    } else if (getLeaveType[0]?.leave_name.toLower() == 'paid leave') {
+                        updateUserLeaveDetails = {
+                            paid_leave: getUserLeaveData[0]?.paid_leave + req.body.no_of_days
+                        }
+                    } else {
+                        db.connection.rollback()
+                        return generic.error(req, res, {
+                            message: "Invalid Leave Type",
+                        });
+                    }
+                    await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user_id })
+
+                }
                 db.connection.commit()
                 return generic.success(req, res, {
                     message: `Leave ${req.body.status} successfully`

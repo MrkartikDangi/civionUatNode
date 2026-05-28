@@ -139,7 +139,7 @@ router.post(
   ]),
   userController.login,
 );
-router.post("/auth/logout",authenticateJWT,userController.logout);
+router.post("/auth/logout", authenticateJWT, userController.logout);
 router.post(
   "/auth/changePassword",
   oneOf([[check("currentPassword", "currentPassword is required").notEmpty()]]),
@@ -603,12 +603,12 @@ router.post(
     ],
   ]),
   authenticateJWT,
-  
-userController.updateUserProfileDetails,
-);
-router.post("/leave/getLeaveTypes",authenticateJWT,leaveController.getLeaveTypes);
 
-router.post("/leave/getLeaveList",authenticateJWT,leaveController.getLeaveList);
+  userController.updateUserProfileDetails,
+);
+router.post("/leave/getLeaveTypes", authenticateJWT, leaveController.getLeaveTypes);
+
+router.post("/leave/getLeaveList", authenticateJWT, leaveController.getLeaveList);
 
 
 router.post(
@@ -620,11 +620,13 @@ router.post(
       check("to_date", "To Date is required").notEmpty(),
       check("reason", "reason is required").notEmpty(),
       check("leave_manager_id", "Leave Manager Id is required").notEmpty(),
+      check("no_of_days", "No of days is required").notEmpty(),
+
     ],
   ]),
   authenticateJWT,
-  
-leaveController.addLeaveData,
+
+  leaveController.addLeaveData,
 );
 router.post(
   "/leave/updateLeaveData",
@@ -639,8 +641,8 @@ router.post(
     ],
   ]),
   authenticateJWT,
-  
-leaveController.updateLeaveData,
+
+  leaveController.updateLeaveData,
 );
 router.post(
   "/leave/updateLeaveStatus",
@@ -651,17 +653,19 @@ router.post(
       check("status", "Status is required").notEmpty(),
       check("leave_manager_id", "Leave Manager Id is required").notEmpty(),
       check("leave_approval_level", "Approval Level is required").notEmpty(),
+      check("leave_type_id", "Leave Type Id is required").notEmpty(),
+      check("no_of_days", "No of days is required").notEmpty(),
 
     ],
   ]),
   authenticateJWT,
-  
-leaveController.updateLeaveStatus,
+
+  leaveController.updateLeaveStatus,
 );
 router.post(
   "/photofiles/recentPhotoFiles",
   authenticateJWT,
-photoFileController.recentPhotoFiles,
+  photoFileController.recentPhotoFiles,
 );
 
 
