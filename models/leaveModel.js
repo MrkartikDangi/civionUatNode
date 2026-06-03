@@ -49,6 +49,7 @@ Leaves.getLeavesList = (postData) => {
                                     WHERE FIND_IN_SET(id, kla.approved_by)
                                 ) AS approved_by,
     ku2.username AS rejected_by,
+    ku3.username AS leave_manager_name,
     IFNULL(DATE_FORMAT(kla.rejected_on, '%Y-%m-%d %H:%i:%s'), '') AS rejected_on,
     IFNULL(DATE_FORMAT(kla.created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at,
     IFNULL(DATE_FORMAT(kla.updated_at, '%Y-%m-%d %H:%i:%s'), '') AS updated_at,
@@ -60,7 +61,7 @@ Leaves.getLeavesList = (postData) => {
                                     WHEN kla.status = 'cancelled' THEN 'Cancelled'
                                     ELSE 'Pending'
                                 END AS status_text
-    FROM kps_leave_application kla LEFT JOIN kps_leave_type klt ON klt.id = kla.leave_type_id LEFT JOIN kps_users ku ON ku.id = kla.user_id LEFT JOIN kps_users ku2 ON ku2.id = kla.rejected_by WHERE 1 = 1 ${whereCondition};`
+    FROM kps_leave_application kla LEFT JOIN kps_leave_type klt ON klt.id = kla.leave_type_id LEFT JOIN kps_users ku ON ku.id = kla.user_id LEFT JOIN kps_users ku2 ON ku2.id = kla.rejected_by LEFT JOIN kps_users ku3 ON ku3.id = kla.leave_manager_id WHERE 1 = 1 ${whereCondition};`
         let values = []
         db.connection.query(query, values, (err, res) => {
             if (err) {
