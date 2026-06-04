@@ -235,7 +235,7 @@ exports.updateLeaveStatus = async (req, res) => {
                 leave_approval_level: req.body.leave_approval_level,
                 leave_manager_id: req.body.leave_manager_id,
             }
-            if (req.body.status == 'approved') {
+            if (req.body.status == 'pending') {
                 if (req.body.leave_approval_level > 1) {
                     updateUserLeave.approved_by = `${getLeaveStatus[0]?.approved_by},${req.body.user.userId}`
                 } else {
