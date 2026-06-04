@@ -42,7 +42,7 @@ Leaves.getLeavesList = (postData) => {
         whereCondition += ` AND kla.leave_manager_id = '${postData.filter.leave_manager_id}'`
     }
     return new Promise((resolve, reject) => {
-    let query = `SELECT kla.id,kla.user_id,kla.leave_approval_level,COALESCE(NULLIF(ku.username, ''), CONCAT(COALESCE(ku.firstName, ''), ' ', COALESCE(ku.lastName, ''))) AS applied_by,kla.from_date,kla.to_date,kla.reason,klt.leave_name AS leave_type,kla.status,kla.no_of_days,kla.leave_manager_id,kla.leave_type_id,
+    let query = `SELECT kla.id,kla.user_id,kla.leave_approval_level,COALESCE(NULLIF(ku.username, ''), CONCAT(COALESCE(ku.firstName, ''), ' ', COALESCE(ku.lastName, ''))) AS applied_by,kla.from_date,kla.to_date,kla.reason,klt.leave_name AS leave_type,kla.status,kla.no_of_days,kla.leave_manager_id,kla.leave_type_id,kla.approved_by,kla.rejected_by,
                               (
                                 SELECT GROUP_CONCAT(
                                     COALESCE(
@@ -53,8 +53,8 @@ Leaves.getLeavesList = (postData) => {
                                 )
                                 FROM kps_users
                                 WHERE FIND_IN_SET(id, kla.approved_by)
-                            ) AS approved_by,
-    ku2.username AS rejected_by,
+                            ) AS approved_by_name,
+    ku2.username AS rejected_by_name,
     ku3.username AS leave_manager_name,
     IFNULL(DATE_FORMAT(kla.rejected_on, '%Y-%m-%d %H:%i:%s'), '') AS rejected_on,
     IFNULL(DATE_FORMAT(kla.created_at, '%Y-%m-%d %H:%i:%s'), '') AS created_at,
