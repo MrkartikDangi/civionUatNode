@@ -259,11 +259,12 @@ exports.updateLeaveStatus = async (req, res) => {
                     let getLeaveType = await generic.selectData('kps_leave_type', { id: req.body.leave_type_id }, ['leave_name'])
                     let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user_id })
                     let updateUserLeaveDetails
-                    if (getLeaveType[0]?.leave_name.toLower() == 'vaccation leave') {
+                    console.log('getLeaveType',getLeaveType)
+                    if (getLeaveType[0]?.leave_name.toLowerCase() == 'vaccation leave') {
                         updateUserLeaveDetails = {
                             vaccation_leave: getUserLeaveData[0]?.vaccation_leave + req.body.no_of_days
                         }
-                    } else if (getLeaveType[0]?.leave_name.toLower() == 'paid leave') {
+                    } else if (getLeaveType[0]?.leave_name.toLowerCase() == 'paid leave') {
                         updateUserLeaveDetails = {
                             paid_leave: getUserLeaveData[0]?.paid_leave + req.body.no_of_days
                         }
@@ -293,7 +294,6 @@ exports.updateLeaveStatus = async (req, res) => {
             });
         }
     } catch (error) {
-        console.log('error',error)
         db.connection.rollback()
         return generic.error(req, res, {
             status: 500,
