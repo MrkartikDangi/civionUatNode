@@ -293,6 +293,7 @@ exports.updateLeaveStatus = async (req, res) => {
             });
         }
     } catch (error) {
+        console.log('error',error)
         db.connection.rollback()
         return generic.error(req, res, {
             status: 500,
