@@ -235,7 +235,7 @@ exports.updateLeaveStatus = async (req, res) => {
                 leave_approval_level: req.body.leave_approval_level,
                 leave_manager_id: req.body.leave_manager_id,
             }
-            if (req.body.status == 'pending' && req.body.leave_approval_level < 1) {
+            if (req.body.status == 'pending' && req.body.leave_approval_level == 1) {
                 updateUserLeave.approved_by = req.body.user.userId
                 updateUserLeave.approved_on = req.body.user.dateTime
             }
@@ -258,7 +258,6 @@ exports.updateLeaveStatus = async (req, res) => {
                     let getLeaveType = await generic.selectData('kps_leave_type', { id: req.body.leave_type_id }, ['leave_name'])
                     let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user_id })
                     let updateUserLeaveDetails
-                    console.log('getLeaveType', getLeaveType)
                     if (getLeaveType[0]?.leave_name.toLowerCase() == 'vaccation leave') {
                         updateUserLeaveDetails = {
                             vaccation_leave: getUserLeaveData[0]?.vaccation_leave + req.body.no_of_days
