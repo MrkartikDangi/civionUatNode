@@ -1044,6 +1044,7 @@ Generic.insertData = async (tableName, data) => {
       let query = `INSERT INTO ${tableName} (${columns}) VALUES (${placeholders})`;
       db.connection.query(query, values, (err, res) => {
         if (err) {
+          console.log('err',err)
           reject({ status: false, message: 'Failed to insert data' })
         } else {
           resolve({ status: true, message: 'Data successully inserted', id: res.insertId })
@@ -1066,6 +1067,8 @@ Generic.updateData = async (tableName, data, condition) => {
         ...Object.values(condition)
       ]
       db.connection.query(query, values, (err, res) => {
+          console.log('err',err)
+
         if (err) {
           reject({ status: false, message: 'Failed to update data' })
         } else {
