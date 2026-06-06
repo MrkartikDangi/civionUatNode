@@ -269,7 +269,7 @@ exports.updateLeaveStatus = async (req, res) => {
                 updateUserLeave.approved_on = req.body.user.dateTime
             }
             if (req.body.status == 'approved') {
-                updateUserLeave.approved_by = req.body.user.approved_by
+                updateUserLeave.approved_by = req.body.approved_by
                 updateUserLeave.approved_on = req.body.user.dateTime
             }
             if (req.body.status == 'rejected') {
