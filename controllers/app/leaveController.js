@@ -102,7 +102,7 @@ exports.addLeaveData = async (req, res) => {
                 });
             }
             let updateUserLeaveDetails
-            if (getLeaveType[0]?.leave_name.toLowerCase() == 'vaccation leave') {
+            if (getLeaveType[0]?.leave_name.toLowerCase() == 'vacation leave') {
                 updateUserLeaveDetails = {
                     vaccation_leave: getUserLeaveData[0]?.vaccation_leave - req.body.no_of_days
                 }
