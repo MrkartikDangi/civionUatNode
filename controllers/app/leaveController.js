@@ -102,6 +102,8 @@ exports.addLeaveData = async (req, res) => {
                 });
             }
             let updateUserLeaveDetails = {}
+            console.log('getLeaveType',getLeaveType);
+            
             if (getLeaveType[0]?.leave_name.toLowerCase() !== 'Unpaid Leave') {
                 if (getLeaveType[0]?.leave_name.toLowerCase() == 'vacation leave') {
                     updateUserLeaveDetails = {
