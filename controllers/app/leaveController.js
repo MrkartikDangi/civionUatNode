@@ -145,7 +145,7 @@ exports.addLeaveData = async (req, res) => {
                     }
                 }
             }
-            if (updateUserLeaveDetails) {
+            if (Object.keys(updateUserLeaveDetails).length) {
                 await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user.userId })
             }
             db.connection.commit()
