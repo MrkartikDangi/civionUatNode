@@ -287,7 +287,7 @@ exports.updateLeaveStatus = async (req, res) => {
                     let getLeaveType = await generic.selectData('kps_leave_type', { id: req.body.leave_type_id }, ['leave_name'])
                     let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user_id })
                     let updateUserLeaveDetails
-                    if (getLeaveType[0]?.leave_name.toLowerCase() == 'vaccation leave') {
+                    if (getLeaveType[0]?.leave_name.toLowerCase() == 'vacation leave') {
                         updateUserLeaveDetails = {
                             vaccation_leave: getUserLeaveData[0]?.vaccation_leave + req.body.no_of_days
                         }
