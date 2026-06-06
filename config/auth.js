@@ -39,6 +39,7 @@ module.exports = {
           req.body.user.first_name = getUserDetails[0]?.firstName ?? ''
           req.body.user.last_name = getUserDetails[0]?.lastName ?? ''
           req.body.user.username = getUserDetails[0]?.username
+          req.body.user.approval_level = getUserDetails[0]?.approval_level
           req.body.user.dateTime = req.header("dateTime") ? req.header("dateTime") : moment().tz('Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss')
         }
         next();

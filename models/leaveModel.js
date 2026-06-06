@@ -35,14 +35,17 @@ Leaves.getLeavesList = (postData) => {
     if (postData.filter && postData.filter.status) {
         whereCondition += ` AND kla.status = '${postData.filter.status}'`
     }
-    if (postData.filter && postData.filter.approval_level) {
+    if (postData.filter && postData.filter.approval_level && postData.user.approval_level == 1) {
         whereCondition += ` AND kla.leave_approval_level <= '${postData.filter.approval_level}'`
+    }
+    if (postData.filter && postData.filter.approval_level  && postData.user.approval_level !== 1) {
+        whereCondition += ` AND kla.leave_approval_level = '${postData.filter.approval_level}'`
     }
     if (postData.filter && postData.filter.leave_manager_id) {
         whereCondition += ` AND kla.leave_manager_id = '${postData.filter.leave_manager_id}'`
     }
     return new Promise((resolve, reject) => {
-    let query = `SELECT kla.id,kla.user_id,kla.leave_approval_level,COALESCE(NULLIF(ku.username, ''), CONCAT(COALESCE(ku.firstName, ''), ' ', COALESCE(ku.lastName, ''))) AS applied_by,kla.from_date,kla.to_date,kla.reason,klt.leave_name AS leave_type,kla.status,kla.no_of_days,kla.leave_manager_id,kla.leave_type_id,kla.approved_by,kla.rejected_by,
+        let query = `SELECT kla.id,kla.user_id,kla.leave_approval_level,COALESCE(NULLIF(ku.username, ''), CONCAT(COALESCE(ku.firstName, ''), ' ', COALESCE(ku.lastName, ''))) AS applied_by,kla.from_date,kla.to_date,kla.reason,klt.leave_name AS leave_type,kla.status,kla.no_of_days,kla.leave_manager_id,kla.leave_type_id,kla.approved_by,kla.rejected_by,
                               (
                                 SELECT GROUP_CONCAT(
                                     COALESCE(
