@@ -16,7 +16,7 @@ exports.getLeaveTypes = async (req, res) => {
                 leave_name: item.leave_name,
                 leave_code: item.leave_code,
                 is_active: item.is_active,
-                available_leaves: item.leave_name.toLowerCase() == 'vaccation leave' ? getUserLeaveData[0]?.vaccation_leave : item.leave_name.toLowerCase() == 'paid leave' ? getUserLeaveData[0]?.paid_leave : 0
+                available_leaves: item.leave_name.toLowerCase() == 'vacation leave' ? getUserLeaveData[0]?.vaccation_leave : item.leave_name.toLowerCase() == 'paid leave' ? getUserLeaveData[0]?.paid_leave : 0
             }));
             return generic.success(req, res, {
                 message: "Leaves Types List",
