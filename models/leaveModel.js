@@ -36,7 +36,7 @@ Leaves.getLeavesList = (postData) => {
         whereCondition += ` AND kla.status = '${postData.filter.status}'`
     }
     if (postData.filter && postData.filter.approval_level) {
-        whereCondition += ` AND kla.leave_approval_level = '${postData.filter.approval_level}'`
+        whereCondition += ` AND kla.leave_approval_level <= '${postData.filter.approval_level}'`
     }
     if (postData.filter && postData.filter.leave_manager_id) {
         whereCondition += ` AND kla.leave_manager_id = '${postData.filter.leave_manager_id}'`
