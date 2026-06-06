@@ -619,7 +619,7 @@ router.post(
       check("from_date", "From Date is required").notEmpty(),
       check("to_date", "To Date is required").notEmpty(),
       check("reason", "reason is required").notEmpty(),
-      check("leave_manager_id", "Leave Manager Id is required").notEmpty(),
+      check("leave_manager_id", "Leave Manager Id is required"),
       check("no_of_days", "No of days is required").notEmpty(),
 
     ],
@@ -651,7 +651,7 @@ router.post(
       check("id", "Id is required").notEmpty(),
       check("user_id", "User Id is required").notEmpty(),
       check("status", "Status is required").notEmpty(),
-      check("leave_manager_id", "Leave Manager Id is required").notEmpty(),
+      // check("leave_manager_id", "Leave Manager Id is required").notEmpty(),
       check("leave_approval_level", "Approval Level is required").notEmpty(),
       check("leave_type_id", "Leave Type Id is required").notEmpty(),
       check("no_of_days", "No of days is required").notEmpty(),

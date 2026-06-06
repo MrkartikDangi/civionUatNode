@@ -4,6 +4,7 @@ const path = require("path");
 const moment = require("moment");
 const leaveModel = require("../../models/leaveModel")
 const db = require("../../config/db")
+const notification = require("../../models/Notification")
 
 
 exports.getLeaveTypes = async (req, res) => {
@@ -83,7 +84,8 @@ exports.addLeaveData = async (req, res) => {
             from_date: req.body.from_date,
             to_date: req.body.to_date,
             leave_type_id: req.body.leave_type_id,
-            leave_manager_id: req.body.leave_manager_id,
+            leave_manager_id: req.body.leave_manager_id || null,
+            leave_approval_level: req.body.leave_approval_level,
             no_of_days: req.body.no_of_days,
             reason: req.body.reason,
             applied_on: req.body.user.dateTime,
@@ -113,6 +115,33 @@ exports.addLeaveData = async (req, res) => {
                 return generic.error(req, res, {
                     message: "Invalid Leave Type",
                 });
+            }
+            // let notificationData = {
+            //     subject: 'Leave',
+            //     message: `${req.body.user.username} has submitted a leave request from ${req.body.from_date} to ${req.body.to_date}`,
+            //     created_by: req.body.user.userId,
+            //     dateTime: req.body.user.dateTime
+            // }
+            // await notification.addNotificationData(notificationData)
+            let userFcmToken
+            if (req.body.leave_manager_id && req.body.leave_approval_level == 0) {
+                userFcmToken = await generic.selectData('kps_users', { id: req.body.leave_manager_id, fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
+            } else {
+                userFcmToken = await generic.selectData('kps_users', { is_boss: '1', fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
+            }
+            if (userFcmToken.length) {
+                for (let row of userFcmToken) {
+                    if (row?.fcm_device_id) {
+                        let notificationFcmData = {
+                            fcmDeviceId: row.fcm_device_id,
+                            title: 'Expense',
+                            body: `${req.body.user.username} has submitted a leave request from ${req.body.from_date} to ${req.body.to_date}.`,
+                            image: '',
+                            data: {}
+                        }
+                        await generic.sendNotification(notificationFcmData)
+                    }
+                }
             }
             await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user.userId })
             db.connection.commit()
@@ -166,7 +195,7 @@ exports.updateLeaveData = async (req, res) => {
             from_date: req.body.from_date,
             to_date: req.body.to_date,
             leave_type_id: req.body.leave_type_id,
-            leave_manager_id: req.body.leave_manager_id,
+            // leave_manager_id: req.body.leave_manager_id,
             reason: req.body.reason,
             updated_at: req.body.user.dateTime
         }
@@ -233,7 +262,7 @@ exports.updateLeaveStatus = async (req, res) => {
                 status: req.body.status,
                 updated_at: req.body.user.dateTime,
                 leave_approval_level: req.body.leave_approval_level,
-                leave_manager_id: req.body.leave_manager_id,
+                // leave_manager_id: req.body.leave_manager_id,
             }
             if (req.body.status == 'pending' && req.body.leave_approval_level == 1) {
                 updateUserLeave.approved_by = req.body.user.userId
@@ -275,6 +304,26 @@ exports.updateLeaveStatus = async (req, res) => {
                     await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user_id })
 
                 }
+                // let userFcmToken
+                // if (req.body.leave_manager_id && req.body.leave_approval_level == 0) {
+                //     userFcmToken = await generic.selectData('kps_users', { id: req.body.leave_manager_id, fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
+                // } else {
+                //     userFcmToken = await generic.selectData('kps_users', { is_boss: '1', fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
+                // }
+                // if (userFcmToken.length) {
+                //     for (let row of userFcmToken) {
+                //         if (row?.fcm_device_id) {
+                //             let notificationFcmData = {
+                //                 fcmDeviceId: row.fcm_device_id,
+                //                 title: 'Expense',
+                //                 body: `${req.body.user.username} has submitted a leave request from ${req.body.from_date} to ${req.body.to_date}.`,
+                //                 image: '',
+                //                 data: {}
+                //             }
+                //             await generic.sendNotification(notificationFcmData)
+                //         }
+                //     }
+                // }
                 db.connection.commit()
                 return generic.success(req, res, {
                     message: `Leave ${req.body.status} successfully`
