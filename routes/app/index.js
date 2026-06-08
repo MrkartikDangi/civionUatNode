@@ -98,7 +98,7 @@ router.post(
       check("mileageRate", "mileageRate is required").notEmpty(),
       check("allowanceDistance", "allowanceDistance is required"),
       check("isBoss", "isBoss is required").notEmpty(),
-      check("date_of_joining", "date of joining is required").notEmpty(),
+      check("date_of_joining", "date of joining is required"),
 
     ],
   ]),

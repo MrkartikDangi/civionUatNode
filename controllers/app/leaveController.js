@@ -289,23 +289,25 @@ exports.updateLeaveStatus = async (req, res) => {
             if (updateLeaveDetails.status) {
                 if (req.body.status == 'rejected') {
                     let getLeaveType = await generic.selectData('kps_leave_type', { id: req.body.leave_type_id }, ['leave_name'])
-                    let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user_id })
-                    let updateUserLeaveDetails
-                    if (getLeaveType[0]?.leave_name.toLowerCase() == 'vacation leave') {
-                        updateUserLeaveDetails = {
-                            vaccation_leave: getUserLeaveData[0]?.vaccation_leave + req.body.no_of_days
+                    if (getLeaveType[0]?.leave_name.toLowerCase() !== 'unpaid leave') {
+                        let updateUserLeaveDetails
+                        let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user_id })
+                        if (getLeaveType[0]?.leave_name.toLowerCase() == 'vacation leave') {
+                            updateUserLeaveDetails = {
+                                vaccation_leave: getUserLeaveData[0]?.vaccation_leave + req.body.no_of_days
+                            }
+                        } else if (getLeaveType[0]?.leave_name.toLowerCase() == 'paid leave') {
+                            updateUserLeaveDetails = {
+                                paid_leave: getUserLeaveData[0]?.paid_leave + req.body.no_of_days
+                            }
+                        } else {
+                            db.connection.rollback()
+                            return generic.error(req, res, {
+                                message: "Invalid Leave Type",
+                            });
                         }
-                    } else if (getLeaveType[0]?.leave_name.toLowerCase() == 'paid leave') {
-                        updateUserLeaveDetails = {
-                            paid_leave: getUserLeaveData[0]?.paid_leave + req.body.no_of_days
-                        }
-                    } else {
-                        db.connection.rollback()
-                        return generic.error(req, res, {
-                            message: "Invalid Leave Type",
-                        });
+                        await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user_id })
                     }
-                    await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user_id })
 
                 }
                 // let userFcmToken
