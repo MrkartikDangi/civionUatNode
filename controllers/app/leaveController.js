@@ -140,7 +140,7 @@ exports.addLeaveData = async (req, res) => {
                     if (row?.fcm_device_id) {
                         let notificationFcmData = {
                             fcmDeviceId: row.fcm_device_id,
-                            title: 'Expense',
+                            title: 'Leave',
                             body: `${req.body.user.username} has submitted a leave request from ${req.body.from_date} to ${req.body.to_date}.`,
                             image: '',
                             data: {}
