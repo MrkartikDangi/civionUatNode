@@ -234,7 +234,7 @@ exports.updateLeaveData = async (req, res) => {
             from_date: req.body.from_date,
             to_date: req.body.to_date,
             leave_type_id: req.body.leave_type_id,
-            no_of_days: no_of_days,
+            no_of_days: req.body.no_of_days,
             // leave_manager_id: req.body.leave_manager_id,
             reason: req.body.reason,
             updated_at: req.body.user.dateTime
