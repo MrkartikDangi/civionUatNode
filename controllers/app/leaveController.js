@@ -5,6 +5,9 @@ const moment = require("moment");
 const leaveModel = require("../../models/leaveModel")
 const db = require("../../config/db")
 const notification = require("../../models/Notification")
+const {
+    leaveTemplate,
+} = require("../../utils/pdfHandlerNew/htmlHandler");
 
 
 exports.getLeaveTypes = async (req, res) => {
@@ -195,10 +198,27 @@ exports.updateLeaveData = async (req, res) => {
                 message: `You cannot update the leave details, as the status of the leave is already changed.`
             });
         }
+        if (getLeaveStatus[0]?.leave_type_id !== req.body.leave_type_id && getLeaveStatus[0]?.leave_type.toLowerCase() !== 'unpaid leave') {
+            let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user.userId })
+            let updateUserLeaveDetails
+            if (getLeaveStatus[0]?.leave_type.toLowerCase() == 'vacation leave') {
+                updateUserLeaveDetails = {
+                    vaccation_leave: getUserLeaveData[0]?.vaccation_leave + getLeaveStatus[0]?.no_of_days
+                }
+            }
+            if (getLeaveStatus[0]?.leave_type.toLowerCase() == 'paid leave') {
+                updateUserLeaveDetails = {
+                    paid_leave: getUserLeaveData[0]?.paid_leave + getLeaveStatus[0]?.no_of_days
+                }
+            }
+            await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user.userId })
+        }
+        let getLeaveType = await generic.selectData('kps_leave_type', { id: req.body.leave_type_id }, ['no_of_days'])
         let updateLeaveData = {
             from_date: req.body.from_date,
             to_date: req.body.to_date,
             leave_type_id: req.body.leave_type_id,
+            no_of_days: no_of_days,
             // leave_manager_id: req.body.leave_manager_id,
             reason: req.body.reason,
             updated_at: req.body.user.dateTime
@@ -208,6 +228,23 @@ exports.updateLeaveData = async (req, res) => {
         }
         let updateLeaveDetails = await generic.updateData('kps_leave_application', updateLeaveData, whereClause)
         if (updateLeaveDetails.status) {
+            if (getLeaveType[0]?.leave_name.toLowerCase() !== 'unpaid leave') {
+                let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user.userId })
+                let updateUserLeaveDetails
+                if (getLeaveType[0]?.leave_name.toLowerCase() == 'vacation leave') {
+                    updateUserLeaveDetails = {
+                        vaccation_leave: getUserLeaveData[0]?.vaccation_leave - req.body.no_of_days
+                    }
+                }
+                if (getLeaveType[0]?.leave_name.toLowerCase() == 'paid leave') {
+                    updateUserLeaveDetails = {
+                        paid_leave: getUserLeaveData[0]?.paid_leave - req.body.no_of_days
+                    }
+                }
+                await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user.userId })
+
+
+            }
             db.connection.commit()
             return generic.success(req, res, {
                 message: "Leave updated successfully"
@@ -287,11 +324,12 @@ exports.updateLeaveStatus = async (req, res) => {
             }
             let updateLeaveDetails = await generic.updateData('kps_leave_application', updateUserLeave, whereClause)
             if (updateLeaveDetails.status) {
-                if (req.body.status == 'rejected') {
-                    let getLeaveType = await generic.selectData('kps_leave_type', { id: req.body.leave_type_id }, ['leave_name'])
+                let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user_id })
+                let getLeaveType = await generic.selectData('kps_leave_type', { id: req.body.leave_type_id }, ['leave_name'])
+                if (req.body.status == 'rejected' || req.body.status == 'cancelled') {
+
                     if (getLeaveType[0]?.leave_name.toLowerCase() !== 'unpaid leave') {
                         let updateUserLeaveDetails
-                        let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user_id })
                         if (getLeaveType[0]?.leave_name.toLowerCase() == 'vacation leave') {
                             updateUserLeaveDetails = {
                                 vaccation_leave: getUserLeaveData[0]?.vaccation_leave + req.body.no_of_days
@@ -309,6 +347,29 @@ exports.updateLeaveStatus = async (req, res) => {
                         await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user_id })
                     }
 
+                }
+                if (req.body.status == 'approved') {
+                    // let getMailInfo = await generic.getEmailInfo({ module_type: 'Leave' })
+                    let leaveTemplateData = {
+                        employeeName: getUserLeaveData[0]?.username ?? '',
+                        leaveType: getLeaveType[0]?.leave_name,
+                        startDate: moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY'),
+                        endDate: moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY'),
+                        currentYear: moment(new Date()).format('YYYY')
+                    }
+                     /*   to: getMailInfo?.email_to ?? '',
+                        cc: getMailInfo?.email_cc ?? '',
+                        bcc: getMailInfo?.email_bcc ?? '', 
+                    */
+                    let Maildata = {
+                        to: 'kpdangi660@gmail.com',
+                        cc: '',
+                        bcc:  '',
+                        subject: `Leave Request Approved`,
+                        html: leaveTemplate(leaveTemplateData),
+                        attachments: [],
+                    };
+                    await generic.sendEmails(Maildata)
                 }
                 // let userFcmToken
                 // if (req.body.leave_manager_id && req.body.leave_approval_level == 0) {
@@ -347,6 +408,7 @@ exports.updateLeaveStatus = async (req, res) => {
             });
         }
     } catch (error) {
+        console.log('error',error)
         db.connection.rollback()
         return generic.error(req, res, {
             status: 500,

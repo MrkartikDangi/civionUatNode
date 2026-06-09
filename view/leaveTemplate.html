@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Leave Request Approved</title>
+</head>
+
+<body
+    style="margin: 0; padding: 0; background-color: #eef1f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding: 50px 0;">
+        <tr>
+            <td align="center">
+
+                <!-- Card Container -->
+                <table width="600" cellpadding="0" cellspacing="0"
+                    style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
+
+                    <!-- Header -->
+                    <tr>
+                        <td
+                            style="background: linear-gradient(135deg, #3498db, #2c3e50); padding: 25px; text-align: center;">
+                            <h1 style="margin: 0; font-size: 24px; color: #ffffff;">
+                                 Leave Request Approved
+                            </h1>
+                            <p style="margin: 5px 0 0; font-size: 14px; color: #dfe6e9;">
+                                Notification from the Leave Management System
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 30px;">
+
+                            <p style="font-size: 15px; color: #2c3e50;">
+                                Hello,
+                            </p>
+
+                            <p style="font-size: 15px; color: #555555; line-height: 1.6;">
+                                Please review the approved leave details for
+                                <strong>{{employeeName}}</strong>.
+                            </p>
+
+                            <!-- Leave Details Box -->
+                            <div
+                                style="margin: 25px 0; padding: 20px; background-color: #f4f8fb; border-left: 5px solid #3498db; border-radius: 6px;">
+
+                                <table cellpadding="0" cellspacing="0" width="100%">
+                                    <tr>
+                                        <td style="padding: 8px 0; font-size: 14px; color: #2c3e50;">
+                                            <strong>Leave Type:</strong>
+                                        </td>
+                                        <td style="padding: 8px 0; font-size: 14px; color: #555555;">
+                                            {{leaveType}}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="padding: 8px 0; font-size: 14px; color: #2c3e50;">
+                                            <strong>Leave Period:</strong>
+                                        </td>
+                                        <td style="padding: 8px 0; font-size: 14px; color: #555555;">
+                                            {{startDate}} to {{endDate}}
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="padding: 8px 0; font-size: 14px; color: #2c3e50;">
+                                            <strong>Status:</strong>
+                                        </td>
+                                        <td style="padding: 8px 0;">
+                                            <span
+                                                style="background-color: #d6eaf8; color: #21618c; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;">
+                                                Approved
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </div>
+
+                            <!-- Note -->
+                            <div
+                                style="margin: 25px 0; padding: 18px; background-color: #f4f8fb; border-left: 5px solid #3498db; border-radius: 6px;">
+                                <p style="margin: 0; font-size: 14px; color: #2c3e50; line-height: 1.5;">
+                                    Your leave request has been successfully approved. Please ensure any necessary
+                                    handovers or pending tasks are completed before your leave period begins.
+                                </p>
+                            </div>
+
+                            <!-- Signature -->
+                            <p style="font-size: 14px; color: #555555; line-height: 1.6;">
+                                Warm Regards,<br>
+                                <strong style="color: #2c3e50;">Leave Management System</strong>
+                            </p>
+
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td
+                            style="background-color: #f7f9fc; padding: 15px; text-align: center; font-size: 12px; color: #95a5a6;">
+                            © {{currentYear}} Leave Management System. All rights reserved.
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>
