@@ -349,7 +349,7 @@ exports.updateLeaveStatus = async (req, res) => {
 
                 }
                 if (req.body.status == 'approved') {
-                    // let getMailInfo = await generic.getEmailInfo({ module_type: 'Leave' })
+                    let getMailInfo = await generic.getEmailInfo({ module_type: 'Leave' })
                     let leaveTemplateData = {
                         employeeName: getUserLeaveData[0]?.username ?? '',
                         leaveType: getLeaveType[0]?.leave_name,
@@ -357,14 +357,10 @@ exports.updateLeaveStatus = async (req, res) => {
                         endDate: moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY'),
                         currentYear: moment(new Date()).format('YYYY')
                     }
-                     /*   to: getMailInfo?.email_to ?? '',
-                        cc: getMailInfo?.email_cc ?? '',
-                        bcc: getMailInfo?.email_bcc ?? '', 
-                    */
                     let Maildata = {
-                        to: 'kpdangi660@gmail.com',
-                        cc: '',
-                        bcc:  '',
+                        to: getMailInfo?.email_to ?? '',
+                        cc: getMailInfo?.email_cc ?? '',
+                        bcc: getMailInfo?.email_bcc ?? '',
                         subject: `Leave Request Approved`,
                         html: leaveTemplate(leaveTemplateData),
                         attachments: [],
@@ -408,7 +404,7 @@ exports.updateLeaveStatus = async (req, res) => {
             });
         }
     } catch (error) {
-        console.log('error',error)
+        console.log('error', error)
         db.connection.rollback()
         return generic.error(req, res, {
             status: 500,
