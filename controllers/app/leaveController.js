@@ -72,14 +72,15 @@ exports.addLeaveData = async (req, res) => {
             filter: {
                 userId: req.body.user.userId,
                 from_date: req.body.from_date,
-                to_date: req.body.to_date
+                to_date: req.body.to_date,
+                check_overlap: true
             }
         }
         const checkExistingLeaves = await leaveModel.getLeavesList(existingUserLeaves);
         if (checkExistingLeaves.length) {
             db.connection.rollback()
             return generic.error(req, res, {
-                message: `You have already applied leave on this date range ${req.body.from_date} - ${req.body.to_date}`
+                message: `You have already applied leave on this date range`
             });
         }
         let insertLeaveData = {
@@ -198,22 +199,37 @@ exports.updateLeaveData = async (req, res) => {
                 message: `You cannot update the leave details, as the status of the leave is already changed.`
             });
         }
-        if (getLeaveStatus[0]?.leave_type_id !== req.body.leave_type_id && getLeaveStatus[0]?.leave_type.toLowerCase() !== 'unpaid leave') {
-            let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user.userId })
-            let updateUserLeaveDetails
-            if (getLeaveStatus[0]?.leave_type.toLowerCase() == 'vacation leave') {
-                updateUserLeaveDetails = {
-                    vaccation_leave: getUserLeaveData[0]?.vaccation_leave + getLeaveStatus[0]?.no_of_days
-                }
+        const existingUserLeaves = {
+            filter: {
+                userId: req.body.user.userId,
+                from_date: req.body.from_date,
+                to_date: req.body.to_date,
+                check_overlap: true
             }
-            if (getLeaveStatus[0]?.leave_type.toLowerCase() == 'paid leave') {
-                updateUserLeaveDetails = {
-                    paid_leave: getUserLeaveData[0]?.paid_leave + getLeaveStatus[0]?.no_of_days
-                }
-            }
-            await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user.userId })
         }
-        let getLeaveType = await generic.selectData('kps_leave_type', { id: req.body.leave_type_id }, ['no_of_days'])
+        const checkExistingLeaves = await leaveModel.getLeavesList(existingUserLeaves);
+        if (checkExistingLeaves.length) {
+            db.connection.rollback()
+            return generic.error(req, res, {
+                message: `You have already applied leave on this date range`
+            });
+        }
+        // if (getLeaveStatus[0]?.leave_type_id !== req.body.leave_type_id && getLeaveStatus[0]?.leave_type.toLowerCase() !== 'unpaid leave') {
+        //     let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user.userId })
+        //     let updateUserLeaveDetails
+        //     if (getLeaveStatus[0]?.leave_type.toLowerCase() == 'vacation leave') {
+        //         updateUserLeaveDetails = {
+        //             vaccation_leave: getUserLeaveData[0]?.vaccation_leave + getLeaveStatus[0]?.no_of_days
+        //         }
+        //     }
+        //     if (getLeaveStatus[0]?.leave_type.toLowerCase() == 'paid leave') {
+        //         updateUserLeaveDetails = {
+        //             paid_leave: getUserLeaveData[0]?.paid_leave + getLeaveStatus[0]?.no_of_days
+        //         }
+        //     }
+        //     await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user.userId })
+        // }
+        // let getLeaveType = await generic.selectData('kps_leave_type', { id: req.body.leave_type_id }, ['no_of_days'])
         let updateLeaveData = {
             from_date: req.body.from_date,
             to_date: req.body.to_date,
@@ -228,23 +244,23 @@ exports.updateLeaveData = async (req, res) => {
         }
         let updateLeaveDetails = await generic.updateData('kps_leave_application', updateLeaveData, whereClause)
         if (updateLeaveDetails.status) {
-            if (getLeaveType[0]?.leave_name.toLowerCase() !== 'unpaid leave') {
-                let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user.userId })
-                let updateUserLeaveDetails
-                if (getLeaveType[0]?.leave_name.toLowerCase() == 'vacation leave') {
-                    updateUserLeaveDetails = {
-                        vaccation_leave: getUserLeaveData[0]?.vaccation_leave - req.body.no_of_days
-                    }
-                }
-                if (getLeaveType[0]?.leave_name.toLowerCase() == 'paid leave') {
-                    updateUserLeaveDetails = {
-                        paid_leave: getUserLeaveData[0]?.paid_leave - req.body.no_of_days
-                    }
-                }
-                await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user.userId })
+            // if (getLeaveType[0]?.leave_name.toLowerCase() !== 'unpaid leave') {
+            //     let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user.userId })
+            //     let updateUserLeaveDetails
+            //     if (getLeaveType[0]?.leave_name.toLowerCase() == 'vacation leave') {
+            //         updateUserLeaveDetails = {
+            //             vaccation_leave: getUserLeaveData[0]?.vaccation_leave - req.body.no_of_days
+            //         }
+            //     }
+            //     if (getLeaveType[0]?.leave_name.toLowerCase() == 'paid leave') {
+            //         updateUserLeaveDetails = {
+            //             paid_leave: getUserLeaveData[0]?.paid_leave - req.body.no_of_days
+            //         }
+            //     }
+            //     await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user.userId })
 
 
-            }
+            // }
             db.connection.commit()
             return generic.success(req, res, {
                 message: "Leave updated successfully"
