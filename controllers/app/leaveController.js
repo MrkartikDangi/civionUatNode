@@ -205,7 +205,7 @@ exports.updateLeaveData = async (req, res) => {
                 userId: req.body.user.userId,
                 from_date: req.body.from_date,
                 to_date: req.body.to_date,
-                check_overlap: true
+                check_overlap: false
             }
         }
         const checkExistingLeaves = await leaveModel.getLeavesList(existingUserLeaves);
