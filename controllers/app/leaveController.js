@@ -245,9 +245,10 @@ exports.updateLeaveData = async (req, res) => {
         }
         let updateLeaveDetails = await generic.updateData('kps_leave_application', updateLeaveData, whereClause)
         if (updateLeaveDetails.status) {
+            let getLeaveType = await generic.selectData('kps_leave_type', { id: req.body.leave_type_id }, ['leave_name'])
             if (getLeaveType[0]?.leave_name.toLowerCase() !== 'unpaid leave') {
 
-                let getUserLeaveData = await generic.selectData('kps_users',{ id: req.body.user.userId })
+                let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user.userId })
 
                 let updateUserLeaveDetails = {}
 
@@ -282,7 +283,7 @@ exports.updateLeaveData = async (req, res) => {
                 }
 
                 if (Object.keys(updateUserLeaveDetails).length > 0) {
-                    await generic.updateData('kps_users',updateUserLeaveDetails,{ id: req.body.user.userId })
+                    await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user.userId })
                 }
             }
             db.connection.commit()
