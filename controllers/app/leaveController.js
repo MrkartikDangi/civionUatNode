@@ -201,6 +201,7 @@ exports.updateLeaveData = async (req, res) => {
         }
         const existingUserLeaves = {
             filter: {
+                id: req.body.id,
                 userId: req.body.user.userId,
                 from_date: req.body.from_date,
                 to_date: req.body.to_date,
@@ -244,23 +245,46 @@ exports.updateLeaveData = async (req, res) => {
         }
         let updateLeaveDetails = await generic.updateData('kps_leave_application', updateLeaveData, whereClause)
         if (updateLeaveDetails.status) {
-            // if (getLeaveType[0]?.leave_name.toLowerCase() !== 'unpaid leave') {
-            //     let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user.userId })
-            //     let updateUserLeaveDetails
-            //     if (getLeaveType[0]?.leave_name.toLowerCase() == 'vacation leave') {
-            //         updateUserLeaveDetails = {
-            //             vaccation_leave: getUserLeaveData[0]?.vaccation_leave - req.body.no_of_days
-            //         }
-            //     }
-            //     if (getLeaveType[0]?.leave_name.toLowerCase() == 'paid leave') {
-            //         updateUserLeaveDetails = {
-            //             paid_leave: getUserLeaveData[0]?.paid_leave - req.body.no_of_days
-            //         }
-            //     }
-            //     await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user.userId })
+            if (getLeaveType[0]?.leave_name.toLowerCase() !== 'unpaid leave') {
 
+                let getUserLeaveData = await generic.selectData('kps_users',{ id: req.body.user.userId })
 
-            // }
+                let updateUserLeaveDetails = {}
+
+                const oldDays = Number(getLeaveType[0]?.no_of_days)
+                const newDays = Number(req.body.no_of_days)
+                const daysDifference = Math.abs(newDays - oldDays)
+
+                if (newDays > oldDays) {
+
+                    if (getLeaveType[0]?.leave_name.toLowerCase() === 'vacation leave') {
+                        updateUserLeaveDetails.vaccation_leave =
+                            getUserLeaveData[0]?.vaccation_leave - daysDifference
+                    }
+
+                    if (getLeaveType[0]?.leave_name.toLowerCase() === 'paid leave') {
+                        updateUserLeaveDetails.paid_leave =
+                            getUserLeaveData[0]?.paid_leave - daysDifference
+                    }
+                }
+
+                if (newDays < oldDays) {
+
+                    if (getLeaveType[0]?.leave_name.toLowerCase() === 'vacation leave') {
+                        updateUserLeaveDetails.vaccation_leave =
+                            getUserLeaveData[0]?.vaccation_leave + daysDifference
+                    }
+
+                    if (getLeaveType[0]?.leave_name.toLowerCase() === 'paid leave') {
+                        updateUserLeaveDetails.paid_leave =
+                            getUserLeaveData[0]?.paid_leave + daysDifference
+                    }
+                }
+
+                if (Object.keys(updateUserLeaveDetails).length > 0) {
+                    await generic.updateData('kps_users',updateUserLeaveDetails,{ id: req.body.user.userId })
+                }
+            }
             db.connection.commit()
             return generic.success(req, res, {
                 message: "Leave updated successfully"
@@ -273,7 +297,7 @@ exports.updateLeaveData = async (req, res) => {
         }
 
     } catch (error) {
-        console.log('error',error)
+        console.log('error', error)
         db.connection.rollback()
         return generic.error(req, res, {
             status: 500,

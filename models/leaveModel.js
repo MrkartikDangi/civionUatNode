@@ -44,9 +44,14 @@ Leaves.getLeavesList = (postData) => {
     if (postData.filter && postData.filter.leave_manager_id) {
         whereCondition += ` AND kla.leave_manager_id = '${postData.filter.leave_manager_id}'`
     }
-    if (postData.filter && postData.filter.from_date && postData.filter.to_date && postData.filter.check_overlap) {
-        whereCondition += `AND '${postData.filter.from_date}' <= kla.to_date AND '${postData.filter.to_date}' >= kla.from_date
+    if (postData.filter && postData.filter.from_date && postData.filter.to_date) {
+        if (postData.filter.check_overlap) {
+            whereCondition += `AND '${postData.filter.from_date}' <= kla.to_date AND '${postData.filter.to_date}' >= kla.from_date
         AND kla.status NOT IN ('rejected', 'cancelled')`
+        } else {
+            whereCondition += `AND '${postData.filter.from_date}' <= kla.to_date AND '${postData.filter.to_date}' >= kla.from_date
+        AND kla.status NOT IN ('rejected', 'cancelled')  AND kla.id != '${postData.filter.id}'`
+        }
     }
     return new Promise((resolve, reject) => {
         let query = `SELECT kla.id,kla.user_id,kla.leave_approval_level,COALESCE(NULLIF(ku.username, ''), CONCAT(COALESCE(ku.firstName, ''), ' ', COALESCE(ku.lastName, ''))) AS applied_by,kla.from_date,kla.to_date,kla.reason,klt.leave_name AS leave_type,kla.status,kla.no_of_days,kla.leave_manager_id,kla.leave_type_id,kla.approved_by,kla.rejected_by,
