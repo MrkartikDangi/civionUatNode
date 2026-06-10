@@ -252,10 +252,9 @@ exports.updateLeaveData = async (req, res) => {
 
                 let updateUserLeaveDetails = {}
 
-                const oldDays = Number(getLeaveType[0]?.no_of_days)
+                const oldDays = Number(getLeaveStatus[0]?.no_of_days)
                 const newDays = Number(req.body.no_of_days)
                 const daysDifference = Math.abs(newDays - oldDays)
-
                 if (newDays > oldDays) {
 
                     if (getLeaveType[0]?.leave_name.toLowerCase() === 'vacation leave') {
