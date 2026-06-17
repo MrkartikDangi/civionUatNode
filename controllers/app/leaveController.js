@@ -99,7 +99,7 @@ exports.addLeaveData = async (req, res) => {
         if (createLeaveDetails.id) {
             let getLeaveType = await generic.selectData('kps_leave_type', { id: req.body.leave_type_id }, ['leave_name'])
             let getUserLeaveData = await generic.selectData('kps_users', { id: req.body.user.userId })
-            if ((getLeaveType[0]?.leave_name.toLowerCase() == 'vaccation leave' && getUserLeaveData[0]?.vaccation_leave < req.body.no_of_days) || (getLeaveType[0]?.leave_name.toLowerCase() == 'paid leave' && getUserLeaveData[0]?.paid_leave < req.body.no_of_days)) {
+            if ((getLeaveType[0]?.leave_name.toLowerCase() == 'vacation leave' && getUserLeaveData[0]?.vaccation_leave < req.body.no_of_days) || (getLeaveType[0]?.leave_name.toLowerCase() == 'paid leave' && getUserLeaveData[0]?.paid_leave < req.body.no_of_days)) {
                 db.connection.rollback()
                 return generic.error(req, res, {
                     message: "You have applied for more leave days than your current balance allows",
@@ -315,7 +315,7 @@ exports.updateLeaveStatus = async (req, res) => {
         });
     }
     try {
-        db.connection.beginTransaction()
+        await db.connection.beginTransaction()
         const checkLeaveStatus = {
             filter: {
                 id: req.body.id,
@@ -346,19 +346,33 @@ exports.updateLeaveStatus = async (req, res) => {
                 leave_approval_level: req.body.leave_approval_level,
                 // leave_manager_id: req.body.leave_manager_id,
             }
+            let notificationBody = ``
+            let notificaitonAdminBody = ``
+            let notificationTitle = ``
+            let userFcmToken = userFcmToken = await generic.selectData('kps_users', { id: req.body.user_id, fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
+            let adminFcmToken = []
             if (req.body.status == 'pending' && req.body.leave_approval_level == 1) {
                 updateUserLeave.approved_by = req.body.user.userId
                 updateUserLeave.approved_on = req.body.user.dateTime
+                notificationBody = `Your leave request for the period ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')} has been approved at the current approval level and is awaiting final approval.`;
+                notificationTitle = "Leave Status Update";
+                notificaitonAdminBody = `${getLeaveStatus[0]?.username} has submitted a leave request from ${getLeaveStatus[0]?.from_date} to ${getLeaveStatus[0]?.to_date}.`
+                adminFcmToken = await generic.selectData('kps_users', { is_boss: '1', fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
             }
             if (req.body.status == 'approved') {
                 updateUserLeave.approved_by = req.body.approved_by
                 updateUserLeave.approved_on = req.body.user.dateTime
+                notificationBody = `Your leave request for the period ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')} has been approved successfully.`;
+                notificationTitle = "Leave Approved";
             }
             if (req.body.status == 'rejected') {
                 updateUserLeave.rejected_by = req.body.user.userId
                 updateUserLeave.rejected_on = req.body.user.dateTime
+                notificationBody = `We regret to inform you that your leave request for the period ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')} has been rejected. Please contact your reporting manager for further details if required.`;
+                notificationTitle = "Leave Rejected";
 
             }
+
             let whereClause = {
                 id: req.body.id,
                 user_id: req.body.user_id
@@ -389,6 +403,52 @@ exports.updateLeaveStatus = async (req, res) => {
                     }
 
                 }
+                if (req.body.status == 'pending' && req.body.leave_approval_level == 1) {
+                    if (userFcmToken.length) {
+                        for (let row of userFcmToken) {
+                            if (row?.fcm_device_id) {
+                                const notificationFcmData = {
+                                    fcmDeviceId: row.fcm_device_id,
+                                    title: notificationTitle,
+                                    body: notificationBody,
+                                    image: '',
+                                    data: {}
+                                }
+                                await generic.sendNotification(notificationFcmData)
+                            }
+                        }
+                    }
+                    if (adminFcmToken.length) {
+                        for (let row of adminFcmToken) {
+                            if (row?.fcm_device_id) {
+                                const notificationFcmData = {
+                                    fcmDeviceId: row.fcm_device_id,
+                                    title: notificationTitle,
+                                    body: notificaitonAdminBody,
+                                    image: '',
+                                    data: {}
+                                }
+                                await generic.sendNotification(notificationFcmData)
+                            }
+                        }
+                    }
+                } else {
+                    if (userFcmToken.length) {
+                        for (let row of userFcmToken) {
+                            if (row?.fcm_device_id) {
+                                const notificationFcmData = {
+                                    fcmDeviceId: row.fcm_device_id,
+                                    title: notificationTitle,
+                                    body: notificationBody,
+                                    image: '',
+                                    data: {}
+                                }
+                                await generic.sendNotification(notificationFcmData)
+                            }
+                        }
+                    }
+                }
+
                 if (req.body.status == 'approved') {
                     let getMailInfo = await generic.getEmailInfo({ module_type: 'Leave' })
                     let leaveTemplateData = {
@@ -408,26 +468,6 @@ exports.updateLeaveStatus = async (req, res) => {
                     };
                     await generic.sendEmails(Maildata)
                 }
-                // let userFcmToken
-                // if (req.body.leave_manager_id && req.body.leave_approval_level == 0) {
-                //     userFcmToken = await generic.selectData('kps_users', { id: req.body.leave_manager_id, fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
-                // } else {
-                //     userFcmToken = await generic.selectData('kps_users', { is_boss: '1', fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
-                // }
-                // if (userFcmToken.length) {
-                //     for (let row of userFcmToken) {
-                //         if (row?.fcm_device_id) {
-                //             let notificationFcmData = {
-                //                 fcmDeviceId: row.fcm_device_id,
-                //                 title: 'Expense',
-                //                 body: `${req.body.user.username} has submitted a leave request from ${req.body.from_date} to ${req.body.to_date}.`,
-                //                 image: '',
-                //                 data: {}
-                //             }
-                //             await generic.sendNotification(notificationFcmData)
-                //         }
-                //     }
-                // }
                 db.connection.commit()
                 return generic.success(req, res, {
                     message: `Leave ${req.body.status} successfully`
