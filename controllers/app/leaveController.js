@@ -141,7 +141,7 @@ exports.addLeaveData = async (req, res) => {
                         let notificationFcmData = {
                             fcmDeviceId: row.fcm_device_id,
                             title: 'Leave',
-                            body: `${req.body.user.username} has submitted a leave request from ${req.body.from_date} to ${req.body.to_date}.`,
+                            body: `${req.body.user.username} has submitted a leave request from ${moment(req.body.from_date).format('DD-MMM-YYYY')} to ${moment(req.body.to_date).format('DD-MMM-YYYY')}.`,
                             image: '',
                             data: {}
                         }
@@ -372,7 +372,6 @@ exports.updateLeaveStatus = async (req, res) => {
                 notificationTitle = "Leave Rejected";
 
             }
-            console.log('notificaitonAdminBody',notificaitonAdminBody)
 
             let whereClause = {
                 id: req.body.id,
