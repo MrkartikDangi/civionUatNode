@@ -349,14 +349,14 @@ exports.updateLeaveStatus = async (req, res) => {
             let notificationBody = ``
             let notificaitonAdminBody = ``
             let notificationTitle = ``
-            let userFcmToken  = await generic.selectData('kps_users', { id: req.body.user_id, fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
+            let userFcmToken = await generic.selectData('kps_users', { id: req.body.user_id, fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
             let adminFcmToken = []
             if (req.body.status == 'pending' && req.body.leave_approval_level == 1) {
                 updateUserLeave.approved_by = req.body.user.userId
                 updateUserLeave.approved_on = req.body.user.dateTime
                 notificationBody = `Your leave request for the period ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')} has been approved at the current approval level and is awaiting final approval.`;
                 notificationTitle = "Leave Status Update";
-                notificaitonAdminBody = `${getLeaveStatus[0]?.applied_by} has submitted a leave request from ${getLeaveStatus[0]?.from_date} to ${getLeaveStatus[0]?.to_date}.`
+                notificaitonAdminBody = `${getLeaveStatus[0]?.applied_by} has submitted a leave request from ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')}.`;
                 adminFcmToken = await generic.selectData('kps_users', { is_boss: '1', fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
             }
             if (req.body.status == 'approved') {
