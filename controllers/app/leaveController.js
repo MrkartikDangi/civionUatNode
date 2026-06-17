@@ -372,6 +372,7 @@ exports.updateLeaveStatus = async (req, res) => {
                 notificationTitle = "Leave Rejected";
 
             }
+            console.log('notificaitonAdminBody',notificaitonAdminBody)
 
             let whereClause = {
                 id: req.body.id,
