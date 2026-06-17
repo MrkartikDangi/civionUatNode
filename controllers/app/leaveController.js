@@ -349,7 +349,7 @@ exports.updateLeaveStatus = async (req, res) => {
             let notificationBody = ``
             let notificaitonAdminBody = ``
             let notificationTitle = ``
-            let userFcmToken = userFcmToken = await generic.selectData('kps_users', { id: req.body.user_id, fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
+            let userFcmToken  = await generic.selectData('kps_users', { id: req.body.user_id, fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
             let adminFcmToken = []
             if (req.body.status == 'pending' && req.body.leave_approval_level == 1) {
                 updateUserLeave.approved_by = req.body.user.userId
