@@ -122,18 +122,26 @@ exports.addLeaveData = async (req, res) => {
                     });
                 }
             }
-            // let notificationData = {
-            //     subject: 'Leave',
-            //     message: `${req.body.user.username} has submitted a leave request from ${req.body.from_date} to ${req.body.to_date}`,
-            //     created_by: req.body.user.userId,
-            //     dateTime: req.body.user.dateTime
-            // }
-            // await notification.addNotificationData(notificationData)
             let userFcmToken
+            let notificationData
             if (req.body.leave_manager_id && req.body.leave_approval_level == 0) {
                 userFcmToken = await generic.selectData('kps_users', { id: req.body.leave_manager_id, fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
+                notificationData = {
+                    subject: 'Leave',
+                    userid: req.body.leave_manager_id,
+                    message: `${req.body.user.username} has submitted a leave request from ${req.body.from_date} to ${req.body.to_date}`,
+                    created_by: req.body.user.userId,
+                    dateTime: req.body.user.dateTime
+                }
             } else {
                 userFcmToken = await generic.selectData('kps_users', { is_boss: '1', fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
+                notificationData = {
+                    subject: 'Leave',
+                    message: `${req.body.user.username} has submitted a leave request from ${req.body.from_date} to ${req.body.to_date}`,
+                    for_boss: '1',
+                    created_by: req.body.user.userId,
+                    dateTime: req.body.user.dateTime
+                }
             }
             if (userFcmToken.length) {
                 for (let row of userFcmToken) {
@@ -149,6 +157,7 @@ exports.addLeaveData = async (req, res) => {
                     }
                 }
             }
+            await notification.addNotificationData(notificationData)
             if (Object.keys(updateUserLeaveDetails).length) {
                 await generic.updateData('kps_users', updateUserLeaveDetails, { id: req.body.user.userId })
             }
@@ -347,29 +356,49 @@ exports.updateLeaveStatus = async (req, res) => {
                 // leave_manager_id: req.body.leave_manager_id,
             }
             let notificationBody = ``
-            let notificaitonAdminBody = ``
+            // let notificaitonAdminBody = ``
             let notificationTitle = ``
+            let notificationData = {
+                subject: 'Leave',
+                created_by: req.body.user.userId,
+                dateTime: req.body.user.dateTime,
+            }
             let userFcmToken = await generic.selectData('kps_users', { id: req.body.user_id, fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
             let adminFcmToken = []
             if (req.body.status == 'pending' && req.body.leave_approval_level == 1) {
                 updateUserLeave.approved_by = req.body.user.userId
                 updateUserLeave.approved_on = req.body.user.dateTime
-                notificationBody = `Your leave request for the period ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')} has been approved at the current approval level and is awaiting final approval.`;
+                // notificationBody = `Your leave request for the period ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')} has been approved at the current approval level and is awaiting final approval.`;
+
                 notificationTitle = "Leave Status Update";
-                notificaitonAdminBody = `${getLeaveStatus[0]?.applied_by} has submitted a leave request from ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')}.`;
+                notificationBody = `${getLeaveStatus[0]?.applied_by} has submitted a leave request from ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')}.`;
                 adminFcmToken = await generic.selectData('kps_users', { is_boss: '1', fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
+
+                notificationData.message = `${getLeaveStatus[0]?.applied_by} has submitted a leave request from ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')}.`
+                notificationData.for_boss = '1'
+
             }
             if (req.body.status == 'approved') {
                 updateUserLeave.approved_by = req.body.approved_by
                 updateUserLeave.approved_on = req.body.user.dateTime
+
                 notificationBody = `Your leave request for the period ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')} has been approved successfully.`;
                 notificationTitle = "Leave Approved";
+
+                notificationData.message = `Your leave request for the period ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')} has been approved successfully.`
+                notificationData.userid = req.body.user_id
+
             }
+
             if (req.body.status == 'rejected') {
                 updateUserLeave.rejected_by = req.body.user.userId
                 updateUserLeave.rejected_on = req.body.user.dateTime
+
                 notificationBody = `We regret to inform you that your leave request for the period ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')} has been rejected. Please contact your reporting manager for further details if required.`;
                 notificationTitle = "Leave Rejected";
+
+                notificationData.message = `We regret to inform you that your leave request for the period ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')} has been rejected. Please contact your reporting manager for further details if required.`
+                notificationData.userid = req.body.user_id
 
             }
 
@@ -403,51 +432,80 @@ exports.updateLeaveStatus = async (req, res) => {
                     }
 
                 }
-                if (req.body.status == 'pending' && req.body.leave_approval_level == 1) {
-                    if (userFcmToken.length) {
-                        for (let row of userFcmToken) {
-                            if (row?.fcm_device_id) {
-                                const notificationFcmData = {
-                                    fcmDeviceId: row.fcm_device_id,
-                                    title: notificationTitle,
-                                    body: notificationBody,
-                                    image: '',
-                                    data: {}
-                                }
-                                await generic.sendNotification(notificationFcmData)
+                // if (req.body.status == 'pending' && req.body.leave_approval_level == 1) {
+                //     if (userFcmToken.length) {
+                //         for (let row of userFcmToken) {
+                //             if (row?.fcm_device_id) {
+                //                 const notificationFcmData = {
+                //                     fcmDeviceId: row.fcm_device_id,
+                //                     title: notificationTitle,
+                //                     body: notificationBody,
+                //                     image: '',
+                //                     data: {}
+                //                 }
+                //                 await generic.sendNotification(notificationFcmData)
+                //             }
+                //         }
+                //     }
+                //     if (adminFcmToken.length) {
+                //         for (let row of adminFcmToken) {
+                //             if (row?.fcm_device_id) {
+                //                 const notificationFcmData = {
+                //                     fcmDeviceId: row.fcm_device_id,
+                //                     title: notificationTitle,
+                //                     body: notificaitonAdminBody,
+                //                     image: '',
+                //                     data: {}
+                //                 }
+                //                 await generic.sendNotification(notificationFcmData)
+                //             }
+                //         }
+                //     }
+                // } else {
+                //     if (userFcmToken.length) {
+                //         for (let row of userFcmToken) {
+                //             if (row?.fcm_device_id) {
+                //                 const notificationFcmData = {
+                //                     fcmDeviceId: row.fcm_device_id,
+                //                     title: notificationTitle,
+                //                     body: notificationBody,
+                //                     image: '',
+                //                     data: {}
+                //                 }
+                //                 await generic.sendNotification(notificationFcmData)
+                //             }
+                //         }
+                //     }
+                // }
+                if (userFcmToken.length) {
+                    for (let row of userFcmToken) {
+                        if (row?.fcm_device_id) {
+                            const notificationFcmData = {
+                                fcmDeviceId: row.fcm_device_id,
+                                title: notificationTitle,
+                                body: notificationBody,
+                                image: '',
+                                data: {}
                             }
-                        }
-                    }
-                    if (adminFcmToken.length) {
-                        for (let row of adminFcmToken) {
-                            if (row?.fcm_device_id) {
-                                const notificationFcmData = {
-                                    fcmDeviceId: row.fcm_device_id,
-                                    title: notificationTitle,
-                                    body: notificaitonAdminBody,
-                                    image: '',
-                                    data: {}
-                                }
-                                await generic.sendNotification(notificationFcmData)
-                            }
-                        }
-                    }
-                } else {
-                    if (userFcmToken.length) {
-                        for (let row of userFcmToken) {
-                            if (row?.fcm_device_id) {
-                                const notificationFcmData = {
-                                    fcmDeviceId: row.fcm_device_id,
-                                    title: notificationTitle,
-                                    body: notificationBody,
-                                    image: '',
-                                    data: {}
-                                }
-                                await generic.sendNotification(notificationFcmData)
-                            }
+                            await generic.sendNotification(notificationFcmData)
                         }
                     }
                 }
+                if (adminFcmToken.length) {
+                    for (let row of adminFcmToken) {
+                        if (row?.fcm_device_id) {
+                            const notificationFcmData = {
+                                fcmDeviceId: row.fcm_device_id,
+                                title: notificationTitle,
+                                body: notificationBody,
+                                image: '',
+                                data: {}
+                            }
+                            await generic.sendNotification(notificationFcmData)
+                        }
+                    }
+                }
+                await notification.addNotificationData(notificationData)
 
                 if (req.body.status == 'approved') {
                     let getMailInfo = await generic.getEmailInfo({ module_type: 'Leave' })
