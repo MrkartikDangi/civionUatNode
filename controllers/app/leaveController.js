@@ -371,10 +371,10 @@ exports.updateLeaveStatus = async (req, res) => {
                 // notificationBody = `Your leave request for the period ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')} has been approved at the current approval level and is awaiting final approval.`;
 
                 notificationTitle = "Leave Status Update";
-                notificationBody = `${getLeaveStatus[0]?.applied_by} has submitted a leave request from ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')}.`;
+                notificationBody = `${req.body.user.username} has approved the leave request submitted by ${getLeaveStatus[0]?.applied_by} for the period ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')}. The request is awaiting your final approval.`;
                 adminFcmToken = await generic.selectData('kps_users', { is_boss: '1', fcm_device_id: 'IS NOT NULL' }, ['fcm_device_id'])
 
-                notificationData.message = `${getLeaveStatus[0]?.applied_by} has submitted a leave request from ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')}.`
+                notificationData.message = `${req.body.user.username} has approved the leave request submitted by ${getLeaveStatus[0]?.applied_by} for the period ${moment(getLeaveStatus[0]?.from_date).format('DD-MMM-YYYY')} to ${moment(getLeaveStatus[0]?.to_date).format('DD-MMM-YYYY')}. The request is awaiting your final approval.`
                 notificationData.for_boss = '1'
 
             }
