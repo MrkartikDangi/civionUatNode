@@ -509,6 +509,13 @@ exports.updateLeaveStatus = async (req, res) => {
 
                 if (req.body.status == 'approved') {
                     let getMailInfo = await generic.getEmailInfo({ module_type: 'Leave' })
+                    let query = `select email from kps_users where is_boss  = ? OR leave_manager = ?`
+                    let queryValues = ['1', '1']
+                    let getBossesAndLeaveManagerMail = await generic.executeSelectQuery(query, queryValues)
+                    let mailsIds = []
+                    if (getBossesAndLeaveManagerMail.length) {
+                        mailsIds = getBossesAndLeaveManagerMail.map(row => row.email).filter(Boolean);
+                    }
                     let leaveTemplateData = {
                         employeeName: getUserLeaveData[0]?.username ?? '',
                         leaveType: getLeaveType[0]?.leave_name,
@@ -518,7 +525,7 @@ exports.updateLeaveStatus = async (req, res) => {
                     }
                     let Maildata = {
                         to: getMailInfo?.email_to ?? '',
-                        cc: getMailInfo?.email_cc ?? '',
+                        cc: mailsIds,
                         bcc: getMailInfo?.email_bcc ?? '',
                         subject: `Leave Request Approved`,
                         html: leaveTemplate(leaveTemplateData),

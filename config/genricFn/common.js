@@ -1185,6 +1185,17 @@ Generic.selectData = async (tableName, condition = {}, columns = '*') => {
 //     }
 //   });
 // };
+Generic.executeSelectQuery = async (query, queryValues = []) => {
+  return new Promise((resolve, reject) => {
+    db.connection.query(query, queryValues, (err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+};
 
 
 module.exports = Generic;
