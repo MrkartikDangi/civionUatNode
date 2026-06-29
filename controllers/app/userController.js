@@ -143,7 +143,12 @@ exports.login = async (req, res) => {
         process.env.JWT_SECRET,
         { expiresIn: "720h" },
       );
-      await generic.updateData('kps_users', { fcm_device_id: req.body.fcm_device_id }, { id: checkExistingUser[0]?.id })
+      let updateUserData = {
+        fcm_device_id: req.body.fcm_device_id,
+        device_details: req.body.device_details && Object.keys(req.body.device_details).length ? JSON.stringify(req.body.device_details) : null
+      }
+      console.log('updateUserData',updateUserData)
+      await generic.updateData('kps_users',updateUserData, { id: checkExistingUser[0]?.id })
       return generic.success(req, res, {
         message: "User logged in successfully",
         data: {
