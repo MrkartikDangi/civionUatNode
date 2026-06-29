@@ -570,6 +570,11 @@ router.post(
   settingController.getSettingFields,
 );
 router.post(
+  "/setting/updateSettingFields",
+  authenticateJWT,
+  settingController.updateSettingFields,
+);
+router.post(
   "/oneDrive/uploadToOneDrive",
   upload.fields([{ name: "file" }]),
   oneOf([
