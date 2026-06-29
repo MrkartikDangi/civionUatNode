@@ -566,7 +566,6 @@ router.post(
       check("setting_key", "setting_key is required").notEmpty(),
     ],
   ]),
-  authenticateJWT,
   settingController.getSettingFields,
 );
 router.post(
